@@ -1,0 +1,85 @@
+import { createTheme } from '@mui/material';
+
+import color from './color';
+import {grey, lightBlue} from "@mui/material/colors";
+
+const theme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: lightBlue[500],
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      main: grey[500],
+    },
+  },
+
+  typography: {
+    fontFamily: 'Noto Sans KR, sans-serif',
+    h1: {
+      fontSize: '36px',
+      fontFamily: 'GmarketSansBold',
+    },
+    h2: {
+      fontSize: '36px',
+      fontWeight: 'bold',
+    },
+    h3: {
+      fontSize: '30px',
+      fontFamily: 'GongGothicMedium',
+    },
+    h4: {
+      fontSize: '20px',
+      fontFamily: 'GongGothicLight',
+    },
+    h5: {
+      fontSize: '20px',
+      fontWeight: 'bold',
+    },
+    subtitle1: {
+      fontSize: '12px',
+      fontFamily: 'GmarketSansMedium',
+    },
+    body1: {
+      fontSize: '16px',
+      fontFamily: 'GongGothicLight',
+    },
+    body2: {
+      fontSize: '14px',
+    },
+    button: {
+      fontFamily: 'GmarketSansMedium',
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          margin: 0,
+          padding: 0,
+          overflowX: 'hidden',
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: '#ffffff',
+          color: '#000000',
+          fontSize: '14px',
+          padding: '10px 15px',
+          borderRadius: '4px',
+          fontFamily: 'GmarketSansMedium',
+        },
+        arrow: {
+          '&::before': {
+            backgroundColor: '#ffffff',
+          },
+        },
+      },
+    },
+  },
+});
+
+export default theme;
