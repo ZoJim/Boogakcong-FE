@@ -39,10 +39,10 @@ const theme = createTheme({
     },
     body1: {
       fontSize: '12px',
-      fontFamily: 'koPubDotumLight',
+      fontFamily: 'koPubDotumMedium',
     },
     body2: {
-      fontFamily: 'koPubDotumLight',
+      fontFamily: 'koPubDotumMedium',
       fontSize: '14px',
     },
     button: {
