@@ -19,19 +19,19 @@ const PostingList = ({ title, content, createdAt }: PostingListProps) => {
     return (
         <Card
             sx={{
-                borderRadius: 8,
+                borderRadius: 4,
                 width: 360,
                 height: 180,
                 padding: 2,
-                boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.1)",
+                boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                backgroundColor: "#fff",
+                backgroundColor: "#fff"
             }}
         >
             <Typography
-                variant="h6"
+                variant="h3"
                 sx={{
                     fontWeight: "bold",
                     marginBottom: 1,
@@ -55,7 +55,6 @@ const PostingList = ({ title, content, createdAt }: PostingListProps) => {
                 sx={{
                     color: "#888",
                     textAlign: "left",
-                    marginTop: "auto", // 날짜를 하단에 배치
                 }}
             >
                 {formatDate(createdAt)}
