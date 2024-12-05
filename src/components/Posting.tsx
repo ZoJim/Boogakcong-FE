@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
-import { TextField, Card, CardMedia, Box, Button, CardActions } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { TextField, Card, CardMedia, Box, Button, CardActions, Typography } from '@mui/material';
 
 // Props 인터페이스 추가
 interface PostingProps {
     onSubmit: (title: string, content: string, image: string) => void;
+    isEditorMode?: boolean;
+    title?: string;
+    content?: string;
+    imageUrl?: string;
 }
 
-const Posting = ({ onSubmit }: PostingProps) => {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl }: PostingProps) => {
+    const [currentTitle, setCurrentTitle] = useState(title || '');
+    const [currentContent, setCurrentContent] = useState(content || '');
     const [image, setImage] = useState<File | null>(null); // 이미지 파일 상태
-    const [preview, setPreview] = useState<string>(''); // 이미지 미리보기 URL
+    const [preview, setPreview] = useState<string>(imageUrl || ''); // 이미지 미리보기 URL
+
+    useEffect(() => {
+        // Props 변경 시 상태 업데이트
+        setCurrentTitle(title || '');
+        setCurrentContent(content || '');
+        setPreview(imageUrl || '');
+    }, [title, content, imageUrl]);
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -22,7 +33,7 @@ const Posting = ({ onSubmit }: PostingProps) => {
 
     const handleSubmit = () => {
         if (onSubmit) {
-            onSubmit(title, content, preview); // title, content, preview를 전달
+            onSubmit(currentTitle, currentContent, preview);
         }
     };
 
@@ -40,22 +51,36 @@ const Posting = ({ onSubmit }: PostingProps) => {
                 }}
             >
                 {/* 제목 */}
-                <TextField
-                    label="제목"
-                    id="title_textfield"
-                    size="small"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    sx={{
-                        width: '100%',
-                        borderRadius: 3,
-                        marginBottom: 2,
-                        marginTop: 4,
-                    }}
-                />
+                {isEditorMode ? (
+                    <TextField
+                        label="제목"
+                        id="title_textfield"
+                        size="small"
+                        value={currentTitle}
+                        onChange={(e) => setCurrentTitle(e.target.value)}
+                        sx={{
+                            width: '100%',
+                            borderRadius: 3,
+                            marginBottom: 2,
+                            marginTop: 4,
+                        }}
+                    />
+                ) : (
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            width: '100%',
+                            textAlign: 'center',
+                            marginBottom: 2,
+                            marginTop: 4,
+                        }}
+                    >
+                        {currentTitle}
+                    </Typography>
+                )}
 
                 {/* 이미지 업로드 영역 */}
-                {!preview && (
+                {isEditorMode && !preview && (
                     <Box
                         sx={{
                             display: 'flex',
@@ -101,90 +126,61 @@ const Posting = ({ onSubmit }: PostingProps) => {
                     />
                 )}
 
-                {/* 모집글, 후기글 버튼 */}
-                <CardActions
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-end', // 우측 정렬
-                        gap: 0.4,
-                        width: '100%',
-                        marginBottom: 1,
-                    }}
-                >
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                            borderRadius: '20px',
-                            paddingX: 1,
-                            paddingY: 0.7,
-                            borderColor: '#2196F3', // 외곽선 색상
-                            color: '#2196F3', // 텍스트 색상
-                            '&:hover': {
-                                backgroundColor: '#BBDEFB', // hover 효과, #BBDEFB = BLUE/100
-                                borderColor: '#2196F3', // #2196F3 = BLUE/500
-                            },
-                        }}
-                    >
-                        모집글
-                    </Button>
-                    <Button
-                        variant="contained"
-                        size="small"
-                        sx={{
-                            borderRadius: '20px',
-                            paddingX: 1,
-                            paddingY: 0.7,
-                            backgroundColor: '#2196F3', // 버튼 배경색
-                            color: '#FFFFFF', // 텍스트 색상
-                            '&:hover': {
-                                backgroundColor: '#1976D2', // hover 효과
-                            },
-                        }}
-                    >
-                        후기글
-                    </Button>
-                </CardActions>
-
                 {/* 내용 */}
-                <Box sx={{ width: '100%', marginBottom: 4 }}>
-                    <TextField
-                        id="content_textfield"
-                        label="작성글"
-                        multiline
-                        rows={4}
-                        fullWidth
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    />
-                </Box>
+                {isEditorMode ? (
+                    <Box sx={{ width: '100%', marginBottom: 4 }}>
+                        <TextField
+                            id="content_textfield"
+                            label="작성글"
+                            multiline
+                            rows={4}
+                            fullWidth
+                            value={currentContent}
+                            onChange={(e) => setCurrentContent(e.target.value)}
+                        />
+                    </Box>
+                ) : (
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            width: '100%',
+                            marginBottom: 4,
+                            whiteSpace: 'pre-wrap',
+                            textAlign: 'left',
+                        }}
+                    >
+                        {currentContent}
+                    </Typography>
+                )}
             </Card>
 
             {/* 완료 버튼 */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center', // 중앙 정렬
-                    marginTop: 2,
-                }}
-            >
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit} // 완료 버튼 클릭 시 handleSubmit 호출
+            {isEditorMode && (
+                <Box
                     sx={{
-                        borderRadius: '10px',
-                        paddingX: 4,
-                        paddingY: 1,
-                        backgroundColor: '#2196F3',
-                        '&:hover': {
-                            backgroundColor: '#1976D2',
-                        },
+                        display: 'flex',
+                        justifyContent: 'center', // 중앙 정렬
+                        marginTop: 2,
                     }}
                 >
-                    완료
-                </Button>
-            </Box>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit} // 완료 버튼 클릭 시 handleSubmit 호출
+                        sx={{
+                            borderRadius: '10px',
+                            paddingX: 4,
+                            paddingY: 1,
+                            backgroundColor: '#2196F3',
+                            '&:hover': {
+                                backgroundColor: '#1976D2',
+                            },
+                        }}
+                    >
+                        완료
+                    </Button>
+                </Box>
+            )}
         </>
     );
 };
