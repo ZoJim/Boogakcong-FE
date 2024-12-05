@@ -42,6 +42,7 @@ const theme = createTheme({
       fontFamily: 'koPubDotumLight',
     },
     body2: {
+      fontFamily: 'koPubDotumLight',
       fontSize: '14px',
     },
     button: {
