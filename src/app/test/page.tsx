@@ -30,8 +30,7 @@ const Page = () => {
                 bgcolor: 'background.default',
             }}
         >
-        {/*    여기 넣어서 테스트 해보면 돼!! */}
-            <Posting/>
+            {/*    여기 넣어서 테스트 해보면 돼!! */}
         </Box>
     );
 }
