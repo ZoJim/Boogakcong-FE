@@ -19,7 +19,7 @@ const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
                 height: '300px',
                 borderRadius: '20px',
                 overflow: 'hidden',
-                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",
                 backgroundColor: '#ffffff',
                 display: 'flex',
                 flexDirection: 'column',
