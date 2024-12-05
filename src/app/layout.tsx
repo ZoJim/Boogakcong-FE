@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 
 import '../../public/fonts.css';
 import Providers from './Providers';
+import Navigation from "@/components/Navigation";
 
 export const metadata = {
   title: 'Boogakcong',
