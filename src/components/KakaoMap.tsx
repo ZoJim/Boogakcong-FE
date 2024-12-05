@@ -12,14 +12,15 @@ interface KakaoMapProps {
     initialLat: number; // 초기 위도
     initialLon: number; // 초기 경도
     level: number; // 지도 확대 수준
+    mapId: string; // 고유한 지도 ID
 }
 
-const KakaoMap = ({ initialLat, initialLon, level }: KakaoMapProps) => {
+const KakaoMap = ({ initialLat, initialLon, level, mapId }: KakaoMapProps) => {
     useEffect(() => {
         const initializeMap = () => {
-            const container = document.getElementById('map');
+            const container = document.getElementById(mapId); // 고유한 ID로 컨테이너 찾기
             if (!container) {
-                console.error('Map container not found');
+                // console.error('Map container not found');
                 return;
             }
 
@@ -56,14 +57,14 @@ const KakaoMap = ({ initialLat, initialLon, level }: KakaoMapProps) => {
         };
 
         loadKakaoMap();
-    }, [initialLat, initialLon, level]);
+    }, [initialLat, initialLon, level, mapId]);
 
     return (
         <div
-            id="map"
+            id={mapId} // 고유한 ID 사용
             style={{
                 width: '100%',
-                height: '400px', // 지도 높이
+                height: '100%', // 부모 컨테이너에 맞게 조정
             }}
         />
     );
