@@ -1,14 +1,14 @@
 import { createTheme } from '@mui/material';
 
 import color from './color';
-import {grey, lightBlue} from "@mui/material/colors";
+import {blue, grey, lightBlue} from "@mui/material/colors";
 
 const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: lightBlue[500],
-      contrastText: '#ffffff',
+      main: blue[200],
+      contrastText: '#000000',
     },
     secondary: {
       main: grey[500],
