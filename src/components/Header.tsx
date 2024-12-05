@@ -24,7 +24,7 @@ const Header = () => {
                             <Avatar alt="User" src="/user-avatar.jpg" />
                             <Button variant="outlined" onClick={handleLogin}>
                                 Logout
-                            </Button> // 테스트.
+                            </Button>
                         </>
                     ) : (
                         <Button variant="contained" onClick={handleLogin}>
