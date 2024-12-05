@@ -1,10 +1,17 @@
 'use client';
 
 import React from 'react';
-import KakaoMap from './KakaoMap'; // 수정된 KakaoMap 컴포넌트
-import { Box, Typography } from '@mui/material';
+import KakaoMap from './KakaoMap'; // KakaoMap 컴포넌트를 import
+import { Box, Typography, Button } from '@mui/material';
+import {blue} from "@mui/material/colors";
+import { grey } from '@mui/material/colors';
+interface CafeMapProps {
+    name: string; // 카페 이름
+    address: string; // 주소
+    kakaoLink: string; // 카카오맵 링크
+}
 
-const CafeMap = () => {
+const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
     return (
         <Box
             sx={{
@@ -25,7 +32,6 @@ const CafeMap = () => {
                     height: '200px', // 지도 영역의 높이를 200px로 제한
                 }}
             >
-                {/* 고유 mapId 전달 */}
                 <KakaoMap initialLat={35.2321} initialLon={129.0846} level={3} mapId="cafeMap1" />
             </Box>
 
@@ -35,23 +41,50 @@ const CafeMap = () => {
                     width: '100%',
                     height: '100px', // 하단 영역의 높이를 100px로 고정
                     backgroundColor: '#ffffff',
-                    boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)',
                     display: 'flex',
-                    alignItems: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start', // 왼쪽 정렬
                     justifyContent: 'center',
-                    padding: '8px',
+                    padding: '16px', // 패딩 추가
                 }}
             >
                 <Typography
-                    variant="h6"
+                    variant="h2"
                     sx={{
-                        color: '#333333',
-                        textAlign: 'center',
-                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        textAlign: 'left', // 텍스트 왼쪽 정렬
                     }}
                 >
-                    여기에 원하는 텍스트 또는 추가 UI 요소를 배치하세요.
+                    {name}
                 </Typography>
+                <Typography
+                    variant="body1"
+                    sx={{
+                        color: grey[500],
+                        fontSize: '12px',
+                        marginBottom: '5px',
+                        textAlign: 'left', // 텍스트 왼쪽 정렬
+                    }}
+                >
+                    {address}
+                </Typography>
+                <Button
+                    variant="contained"
+                    sx={{
+                        alignSelf: 'flex-start', // 버튼을 왼쪽 정렬
+                        backgroundColor: blue[300],
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        '&:hover': {
+                            backgroundColor: blue[400],
+                        },
+                    }}
+                    onClick={() => window.open(kakaoLink, '_blank')} // 카카오맵 링크로 이동
+                >
+                    카카오 장소보기
+                </Button>
             </Box>
         </Box>
     );
