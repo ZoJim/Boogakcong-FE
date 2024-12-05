@@ -1,14 +1,14 @@
 import { createTheme } from '@mui/material';
 
 import color from './color';
-import {grey, lightBlue} from "@mui/material/colors";
+import {blue, grey, lightBlue} from "@mui/material/colors";
 
 const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: lightBlue[500],
-      contrastText: '#ffffff',
+      main: blue[200],
+      contrastText: '#000000',
     },
     secondary: {
       main: grey[500],
@@ -16,34 +16,30 @@ const theme = createTheme({
   },
 
   typography: {
-    fontFamily: 'Noto Sans KR, sans-serif',
+    fontFamily: 'krPubDotumLight',
     h1: {
-      fontSize: '36px',
+      fontSize: '16px',
       fontFamily: 'GmarketSansBold',
     },
     h2: {
-      fontSize: '36px',
-      fontWeight: 'bold',
+      fontSize: '16px',
+      fontWeight: 'GmarketSansMedium',
     },
     h3: {
-      fontSize: '30px',
-      fontFamily: 'GongGothicMedium',
+      fontSize: '16px',
+      fontFamily: 'koPubDotumBold',
     },
     h4: {
-      fontSize: '20px',
-      fontFamily: 'GongGothicLight',
-    },
-    h5: {
-      fontSize: '20px',
-      fontWeight: 'bold',
+      fontSize: '12px',
+      fontFamily: 'koPubDotumLight',
     },
     subtitle1: {
       fontSize: '12px',
       fontFamily: 'GmarketSansMedium',
     },
     body1: {
-      fontSize: '16px',
-      fontFamily: 'GongGothicLight',
+      fontSize: '12px',
+      fontFamily: 'koPubDotumLight',
     },
     body2: {
       fontSize: '14px',
