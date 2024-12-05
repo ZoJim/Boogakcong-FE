@@ -22,9 +22,26 @@
 }
 
 @font-face {
-  font-family: 'GongGothicLight';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
+  font-family: 'krPubDotumLight';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/krPubDotumLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
+
+@font-face {
+  font-family: 'krPubDotumMedium';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/krPubDotumMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+  font-family: 'krPubDotumBold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/krPubDotumBold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
 
