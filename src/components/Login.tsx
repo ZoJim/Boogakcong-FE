@@ -26,16 +26,16 @@ const Login = ({ onNavigate }: LoginProps) => {
     >
       <Card
         sx={{
-          width: 496, // 원의 너비
-          height: 545, // 원의 높이
+          width: 496,
+          height: 545,
           borderRadius: "50%", // 원 모양
           textAlign: "center",
           bgcolor: "white",
           boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
           display: "flex",
-          flexDirection: "column", // 수직 배치
-          justifyContent: "center", // 수직 중앙 정렬
-          alignItems: "center", // 수평 중앙 정렬
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
           padding: 3,
         }}
       >
@@ -73,7 +73,7 @@ const Login = ({ onNavigate }: LoginProps) => {
           sx={{
             width: "75%",
             borderRadius: 3,
-            marginBottom: 2,
+            marginBottom: 4,
           }}
         />
 
@@ -99,7 +99,7 @@ const Login = ({ onNavigate }: LoginProps) => {
 
         {/* Register Link */}
         <Typography
-          variant="body2"
+          variant="subtitle1"
           style={{
             textDecoration: "underline",
             cursor: "pointer",
