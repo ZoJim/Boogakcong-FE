@@ -43,8 +43,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onRe
                         height: 25,
                         fontSize: '0.8rem',
                         color: 'white',
-                        bgcolor: blue[200],
-                        '&:hover': { bgcolor: blue[700] },
+                        bgcolor: blue[300],
+                        '&:hover': { bgcolor: blue[500] },
                     }}
                     onClick={role === '카페 소유자' ? onEditCafe : onRegisterCafe}
                 >
