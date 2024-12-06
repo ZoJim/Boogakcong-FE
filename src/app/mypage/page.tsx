@@ -12,6 +12,7 @@ import { getMyReview } from '@/app/api/review';
 import { useAtomValue } from 'jotai';
 import { accessTokenAtom } from '@/state/authAtom';
 import { UserRole } from '@/types';
+import {getMyPost} from "@/app/api/post";
 
 const Page = () => {
     const token = useAtomValue(accessTokenAtom); // Access Token 가져오기
@@ -23,6 +24,11 @@ const Page = () => {
     const [reviews, setReviews] = useState<
         { id: number; cafeName: string; content: string; createdAt: string }[]
     >([]);
+
+    const [post, setPost] = useState<
+        { id: number; cafeName: string; content: string; createdAt: string }[]
+    >([]);
+
     const [error, setError] = useState<string | null>(null); // 에러 상태 관리
 
     // Fetch user info
@@ -71,6 +77,34 @@ const Page = () => {
         };
 
         fetchMyReviews();
+    }, [token]);
+
+
+    // Fetch posts written by the user
+
+    useEffect(() => {
+        const fetchMyPosts = async () => {
+            if (!token) return;
+
+            try {
+                const response = await getMyPost(token);
+                setPost(
+                    response.map((post: any) => ({
+                        id: post.id,
+                        title: post.title,
+                        content: post.content,
+                        userId: post.userId,
+                        postType: post.postType,
+                        imageUrl: post.imageUrl,
+                        createdAt: post.createdAt,
+                    }))
+                );
+            } catch (err: any) {
+                console.error('Error fetching my reviews:', err);
+            }
+        };
+
+        fetchMyPosts();
     }, [token]);
 
     const handleEditCafe = () => {
@@ -168,19 +202,21 @@ const Page = () => {
                     </Typography>
                 </Box>
 
-                {/* PostingList 컴포넌트 */}
-                <PostingList
-                    title="훌륭한 카페."
-                    content="아늑한 분위기와 훌륭한 커피, 연구 아이디어 떠오르기 딱 좋은 곳입니다. 조용한 배경음악이 흐르는 공간에서 집중도가 높아지는 느낌이에요. 동료들과 함께 와도 좋을 만큼 편안하고 배려 깊은 서비스가 인상적입니다."
-                    createdAt="2024-12-05"
-                    imageUrl="/images/sanjinee.png"
-                />
-                <PostingList
-                    title="친절한 직원"
-                    content="직원분들이 정말 친절하고 상냥해서 기분 좋게 시간을 보냈어요."
-                    createdAt="2024-12-06"
-                    imageUrl="/images/sanjinee.png"
-                />
+                {post.length > 0 ? (
+                    post.map((post) => (
+                        <PostingList
+                            key={post.id}
+                            title={post.title}
+                            content={post.content}
+                            createdAt={post.createdAt}
+                            imageUrl={post.imageUrl}
+                        />
+                    ))
+                ) : (
+                    <Typography sx={{ color: '#ffffff', mt: 2 }}>
+                        아직 작성한 게시글이 없습니다.
+                    </Typography>
+                )}
             </Box>
 
             {/* 네비게이션 */}
