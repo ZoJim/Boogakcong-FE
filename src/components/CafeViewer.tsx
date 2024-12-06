@@ -2,8 +2,12 @@ import React, {useState} from 'react';
 import {Box, Button, Card, CardMedia, TextField, Typography} from '@mui/material';
 import KakaoMap from '@/components/KakaoMap';
 import {blue, grey} from "@mui/material/colors";
+import { postReview } from '@/app/api/review'; // 리뷰 등록 API
+import {accessTokenAtom} from "@/state/authAtom";
+import {useAtomValue} from "jotai";
 
 interface CafeViewerProps {
+    id: number;
     name: string;
     phoneNumber: string;
     roadAddress: string;
@@ -26,6 +30,7 @@ interface CafeViewerProps {
 
 const CafeViewer = (
     {
+        id: id,
         name,
         phoneNumber,
         roadAddress,
@@ -38,20 +43,32 @@ const CafeViewer = (
         notice,
         reviewResponse,
         isWifi,
-        isLoggedIn,
     }: CafeViewerProps
 ) => {
     const [newComment, setNewComment] = useState('');
+    const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null); // Success or error message
+    const accessToken = useAtomValue(accessTokenAtom); // Jotai로 accessToken 가져오기
+    const isLoggedIn = Boolean(accessToken); // 로그인 여부 결정
 
-    const handleCommentSubmit = () => {
-        // FIXME: Implement API integration
-        console.log({
-            cafeId: 1, // Replace with actual cafeId
-            content: newComment,
-        });
+    const handleCommentSubmit = async () => {
+        if (!newComment.trim()) {
+            setFeedbackMessage('리뷰 내용을 입력해주세요.');
+            return;
+        }
 
-        setNewComment(''); // Clear the input field
+        try {
+            await postReview(accessToken as string, id, newComment.trim());
+            setNewComment(''); // Clear the input field
+            setFeedbackMessage('리뷰가 성공적으로 등록되었습니다.');
+        } catch (error) {
+            console.error('리뷰 등록 실패:', error);
+            setFeedbackMessage('리뷰 등록에 실패했습니다. 다시 시도해주세요.');
+        }
+
+        // 메시지는 몇 초 후 사라지게 설정
+        setTimeout(() => setFeedbackMessage(null), 3000);
     };
+
 
     return (
         <Card

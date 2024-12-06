@@ -3,7 +3,6 @@
 import React from 'react';
 import {Box} from '@mui/material';
 import {blue} from "@mui/material/colors";
-import CafeViewer from "@/components/CafeViewer";
 import Login from "@/components/Login";
 
 const Page = () => {
