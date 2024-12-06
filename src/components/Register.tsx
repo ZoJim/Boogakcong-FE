@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { blue } from "@mui/material/colors";
 
-const Register = () => {
+interface RegisterProps {
+  onNavigate: (page: string) => void; // 페이지 전환 함수
+}
+
+const Register = ({ onNavigate }: RegisterProps) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -21,25 +26,25 @@ const Register = () => {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        bgcolor: "#f5f5f5",
-        padding: 2,
+        bgcolor: "#ffffff",
+        padding: 2.5,
       }}
     >
       <Box
         sx={{
-          width: 400,
+          width: 350,
           textAlign: "center",
           backgroundColor: "white",
           padding: 4,
           borderRadius: 2,
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Typography
-          variant="h4"
+          variant="h1"
           sx={{
             fontWeight: "bold",
-            color: "#2196F3",
+            fontSize: 36,
+            color: blue[500],
             marginBottom: 3,
           }}
         >
@@ -50,8 +55,8 @@ const Register = () => {
           label="Name"
           placeholder="홍길동"
           variant="outlined"
-          fullWidth
           value={name}
+          fullWidth
           onChange={(e) => setName(e.target.value)}
           sx={{ marginBottom: 2 }}
         />
@@ -90,9 +95,9 @@ const Register = () => {
         <Button
           variant="contained"
           fullWidth
-          onClick={handleRegister}
+          onClick={() => onNavigate("login")} // 페이지 전환
           sx={{
-            bgcolor: "#2196F3",
+            bgcolor: blue[500],
             color: "white",
             height: 45,
             fontWeight: "bold",
