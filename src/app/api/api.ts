@@ -1,17 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 
 const SPRING_API_URL = process.env.NEXT_PUBLIC_SPRING_API_URL;
-const FASTAPI_API_URL = process.env.NEXT_PUBLIC_FASTAPI_API_URL;
 
 const springApi: AxiosInstance = axios.create({
   baseURL: SPRING_API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-const fastApi: AxiosInstance = axios.create({
-  baseURL: FASTAPI_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -58,5 +50,3 @@ export const springApiRequest = (method: Method, url: string, token: string | nu
   return makeRequest(springApi, method, url, token, data);
 };
 
-export const fastApiRequest = (method: Method, url: string, token: string | null = null, data: unknown = null) =>
-  makeRequest(fastApi, method, url, token, data);
