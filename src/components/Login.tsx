@@ -104,7 +104,7 @@ const Login = ({ onNavigate }: LoginProps) => {
             textDecoration: "underline",
             cursor: "pointer",
           }}
-          onClick={() => onNavigate("register")} // 페이지 전환
+          onClick={() => onNavigate("/register")} // 페이지 전환
         >
           회원이 아니신가요?
         </Typography>
