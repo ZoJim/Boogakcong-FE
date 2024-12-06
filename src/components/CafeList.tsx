@@ -30,7 +30,7 @@ const CafeItem = ({ cafe, onCafeClick }: { cafe: Cafe; onCafeClick: (cafe: Cafe)
                 borderRadius: '8px',
                 boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",
                 backgroundColor: '#ffffff',
-                width: '100%',
+                width: '350px',
                 height: '50px',
                 margin: '8px auto',
                 cursor: 'pointer',

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Card, CardMedia, Box, Button, CardActions, Typography } from '@mui/material';
+import KakaoMap from "@/components/KakaoMap";
 
 // Props 인터페이스 추가
 interface PostingProps {
@@ -8,9 +9,11 @@ interface PostingProps {
     title?: string;
     content?: string;
     imageUrl?: string;
+    isCafe?: boolean;
+    kakaoMap?: KakaoMap;
 }
 
-const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl }: PostingProps) => {
+const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl, isCafe ,kakaoMap }: PostingProps) => {
     const [currentTitle, setCurrentTitle] = useState(title || '');
     const [currentContent, setCurrentContent] = useState(content || '');
     const [image, setImage] = useState<File | null>(null); // 이미지 파일 상태
@@ -111,23 +114,107 @@ const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl }: Po
                     </Box>
                 )}
 
-                {/* 업로드된 이미지 미리보기 */}
-                {preview && (
-                    <CardMedia
-                        component="img"
-                        image={preview}
-                        alt="업로드된 이미지"
-                        sx={{
-                            width: '100%',
-                            height: 200,
-                            borderRadius: 3,
-                            marginBottom: 2,
-                        }}
-                    />
+                {/* 이미지 업로드 또는 지도 표시 */}
+                {isEditorMode ? (
+                    // 에디터 모드
+                    isCafe ? (
+                        // 에디터 모드 + 카페일 경우
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '100%',
+                                height: 200,
+                                border: '2px dashed lightgray',
+                                borderRadius: 3,
+                                marginBottom: 1,
+                                backgroundColor: '#f0f0f0',
+                                color: 'gray',
+                                fontWeight: 'bold',
+                            }}
+                        >
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    textAlign: 'center',
+                                    fontSize: '14px',
+                                }}
+                            >
+                                카페 정보는 지도 추가만 가능합니다.
+                            </Typography>
+                        </Box>
+                    ) : (
+                        // 에디터 모드 + 일반 모드일 경우
+                        !preview && (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: '100%',
+                                    height: 200,
+                                    border: '2px dashed lightgray',
+                                    borderRadius: 3,
+                                    marginBottom: 1,
+                                    cursor: 'pointer',
+                                    backgroundColor: '#f9f9f9',
+                                    position: 'relative',
+                                }}
+                            >
+                                <label htmlFor="image-upload" style={{ cursor: 'pointer', textAlign: 'center' }}>
+                    <span style={{ color: 'gray', fontSize: '16px', fontWeight: 'bold' }}>
+                        이미지 업로드
+                    </span>
+                                </label>
+                                <input
+                                    id="image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleImageChange} // 이미지 파일 선택 핸들러
+                                />
+                            </Box>
+                        )
+                    )
+                ) : (
+                    // 뷰어 모드
+                    isCafe ? (
+                        // 뷰어 모드 + 카페일 경우
+                        <Box
+                            sx={{
+                                width: '100%',
+                                height: 200,
+                                marginBottom: 2,
+                            }}
+                        >
+                            <KakaoMap
+                                initialLat={35.2321} // 여기에 초기 위도 값
+                                initialLon={129.0846} // 여기에 초기 경도 값
+                                level={3}
+                                mapId="cafeMap" // 고유한 지도 ID
+                            />
+                        </Box>
+                    ) : (
+                        // 뷰어 모드 + 일반 모드일 경우
+                        preview && (
+                            <CardMedia
+                                component="img"
+                                image={preview}
+                                alt="업로드된 이미지"
+                                sx={{
+                                    width: '100%',
+                                    height: 200,
+                                    borderRadius: 3,
+                                    marginBottom: 2,
+                                }}
+                            />
+                        )
+                    )
                 )}
 
-                        {/* 모집글, 후기글 버튼 */}
-                        <CardActions
+                    {/* 모집글, 후기글 버튼 */}
+                    <CardActions
                     sx={{
                         display: 'flex',
                         justifyContent: 'flex-end', // 우측 정렬
@@ -204,14 +291,14 @@ const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl }: Po
                 <Box
                     sx={{
                         display: 'flex',
-                        justifyContent: 'center', // 중앙 정렬
+                        justifyContent: 'center',
                         marginTop: 2,
                     }}
                 >
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={handleSubmit} // 완료 버튼 클릭 시 handleSubmit 호출
+                        onClick={handleSubmit}
                         sx={{
                             borderRadius: '10px',
                             paddingX: 4,

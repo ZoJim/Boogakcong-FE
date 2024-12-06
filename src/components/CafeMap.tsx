@@ -11,9 +11,10 @@ interface CafeMapProps {
     kakaoLink: string; // 카카오맵 링크
     latitude: number; // 카페 위도
     longitude: number; // 카페 경도
+    onPlaceButtonClick: () => void; // New prop for button click handler
 }
 
-const CafeMap = ({ name, address, kakaoLink, latitude, longitude }: CafeMapProps) => {
+const CafeMap = ({ name, address, kakaoLink, latitude, longitude, onPlaceButtonClick }: CafeMapProps) => {
     return (
         <Box
             sx={{
@@ -91,7 +92,7 @@ const CafeMap = ({ name, address, kakaoLink, latitude, longitude }: CafeMapProps
                             backgroundColor: blue[400],
                         },
                     }}
-                    onClick={() => window.open(kakaoLink, '_blank')}
+                    onClick={onPlaceButtonClick}
                 >
                     장소보기
                 </Button>
