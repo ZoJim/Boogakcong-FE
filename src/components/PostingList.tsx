@@ -17,10 +17,10 @@ const formatDate = (isoDate: string): string => {
 };
 
 // 글자 수 제한 함수
-const truncateText = (text: string, maxLength: number): string => {
+const truncateText = (text: string | null | undefined, maxLength: number): string => {
+    if (!text) return "";
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
-
 const PostingList = ({ title, content, createdAt, imageUrl }: PostingListProps) => {
     return (
         <Card

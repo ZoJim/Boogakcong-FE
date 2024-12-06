@@ -1,45 +1,66 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Backdrop, Box, CardMedia, Chip, Typography } from '@mui/material';
 import PostingList from "@/components/PostingList";
 import NavigationBar from "@/components/Navigation";
 import { blue } from "@mui/material/colors";
 import { Posting, PostType } from "@/types";
-import postings from "@/mocks/postings";
 import PostingViewer from "@/components/PostViewer";
+import { getPostAll } from "@/app/api/post";
 
 const Page = () => {
     const [selectedPosting, setSelectedPosting] = useState<Posting | null>(null); // 선택된 게시글 상태
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
     const [selectedFilter, setSelectedFilter] = useState<PostType | null>(null); // 필터 상태 (RECRUITMENT, REVIEW)
+    const [postings, setPostings] = useState<Posting[]>([]); // 전체 게시글 상태
+    const [filteredPostings, setFilteredPostings] = useState<Posting[]>([]); // 필터링된 게시글 상태
+
+    // 서버에서 게시글 목록을 가져오는 함수
+    useEffect(() => {
+        const fetchPostings = async () => {
+            try {
+                const res = await getPostAll();
+                console.log("API Response:", res);
+                if (res.status) {
+                    console.log("Fetched postings:", res.data);
+                    setPostings(res.data);
+                    setFilteredPostings(res.data);
+                } else {
+                    console.error("API Error:", res.message);
+                    throw new Error(res.message || "Failed to fetch posts");
+                }
+            } catch (error) {
+                console.error("Error in fetchPostings:", error);
+            }
+        };
+
+        fetchPostings();
+    }, []);
+
+    // 필터가 변경될 때마다 필터링된 게시글 목록 업데이트
+    useEffect(() => {
+        if (selectedFilter) {
+            setFilteredPostings(postings.filter(posting => posting.postType === selectedFilter));
+        } else {
+            setFilteredPostings(postings); // 필터가 없으면 전체 게시글을 표시
+        }
+    }, [selectedFilter, postings]); // 필터나 게시글 목록이 변경될 때마다 실행
 
     const handlePostingClick = (postId: number) => {
         // FIXME: 아래 코드는 임시로 작성한 코드입니다
         // 실제로는 서버에서 카페 정보를 가져와야 합니다.
-        setSelectedPosting(
-            {
-                id: 4,
-                title: '✨ 부산대 최고 유일무이카페 오픈',
-                content: '안녕하세요 ~ :) 유일무이 카페입니다. 커피 1번 리필 가능해요~! 얼마전에 오픈했으니 자주 와주세요! 그리고 부산대 이벤트 중이니 친구들과 함께 방문하시면 특별한 혜택을 드립니다. 따뜻한 분위기와 고급스러운 커피를 즐기실 수 있어요. 많이 찾아와주세요!',
-                userId: 5,
-                postType: PostType.REVIEW,
-                imageUrl: 'https://zojim.s3.ap-northeast-2.amazonaws.com/750_750_20240408112440752_photo_5399cfbe4e71.jpg',
-                createdAt: '2024-12-05T15:00:00',
-            }
-        );
-        setIsModalOpen(true); // 모달 열기
+        const selected = postings.find(posting => posting.id === postId);
+        if (selected) {
+            setSelectedPosting(selected);
+            setIsModalOpen(true); // 모달 열기
+        }
     };
 
     const closeModal = () => {
         setSelectedPosting(null);
         setIsModalOpen(false);
     };
-
-    // 필터된 게시글 목록
-    const filteredPostings = selectedFilter
-        ? postings.filter(posting => posting.postType === selectedFilter)
-        : postings;
 
     return (
         <Box
@@ -85,10 +106,11 @@ const Page = () => {
                     </Box>
                     <Box onClick={() => handlePostingClick(0)}>
                         <PostingList
-                            title={postings[0].title}
-                            content={postings[0].content}
-                            createdAt={postings[0].createdAt}
-                            imageUrl={postings[0].imageUrl}
+                            // FIXME
+                            // title={postings[0].title}
+                            // content={postings[0].content}
+                            // createdAt={postings[0].createdAt}
+                            // imageUrl={postings[0].imageUrl}
                         />
                     </Box>
                 </Box>
