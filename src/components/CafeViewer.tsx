@@ -174,7 +174,7 @@ const CafeViewer = (
                                 padding: 2,
                                 backgroundColor: '#f9f9f9',
                                 borderRadius: 2,
-                                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                                boxShadow: 'inset 0 2px 5px rgba(0, 0, 0, 0.1)',
                             }}
                         >
                             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
@@ -188,7 +188,7 @@ const CafeViewer = (
                 </Box>
             )}
             <Box sx={{ width: '100%', marginTop: 3 }}>
-                {!isLoggedIn ? (
+                {isLoggedIn ? (
                     <Box
                         sx={{
                             display: 'flex',
