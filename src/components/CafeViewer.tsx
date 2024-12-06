@@ -4,7 +4,7 @@ import KakaoMap from '@/components/KakaoMap';
 import {blue, grey} from "@mui/material/colors";
 
 interface CafeViewerProps {
-    cafeName: string;
+    name: string;
     phoneNumber: string;
     roadAddress: string;
     addressDetail: string;
@@ -26,7 +26,7 @@ interface CafeViewerProps {
 
 const CafeViewer = (
     {
-        cafeName,
+        name,
         phoneNumber,
         roadAddress,
         addressDetail,
@@ -74,7 +74,7 @@ const CafeViewer = (
                     marginTop: 4,
                 }}
             >
-                {cafeName}
+                {name}
             </Typography>
 
             <Box

@@ -3,10 +3,10 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import {Cafe, CafeList} from "@/types";
+import {Cafe, CafeSimple} from "@/types";
 
 
-const CafeItem = ({ cafe, onCafeClick }: { listObject: CafeList; onCafeClick: (cafe: Cafe) => void }) => {
+const CafeItem = ({ cafe, onCafeClick }: { listObject: CafeSimple; onCafeClick: (cafe: Cafe) => void }) => {
     return (
         <Box
             sx={{
@@ -52,7 +52,7 @@ const CafeItem = ({ cafe, onCafeClick }: { listObject: CafeList; onCafeClick: (c
                         color: 'inherit', // 동일한 색상 유지
                     }}
                 >
-                    {cafe.distance}분
+                    {cafe.timeFromMainGate}분
                 </Box>
             </Typography>
         </Box>

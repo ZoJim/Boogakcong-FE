@@ -22,13 +22,15 @@ const Page = () => {
             try {
                 const res = await getPostAll();
                 console.log("API Response:", res);
-                if (res.status) {
-                    console.log("Fetched postings:", res.data);
-                    setPostings(res.data);
-                    setFilteredPostings(res.data);
+
+                // res가 배열인지 확인
+                if (Array.isArray(res)) {
+                    console.log("Fetched postings:", res);
+                    setPostings(res);
+                    setFilteredPostings(res);
                 } else {
-                    console.error("API Error:", res.message);
-                    throw new Error(res.message || "Failed to fetch posts");
+                    console.error("Unexpected API response:", res);
+                    throw new Error("Invalid response format");
                 }
             } catch (error) {
                 console.error("Error in fetchPostings:", error);
@@ -48,8 +50,6 @@ const Page = () => {
     }, [selectedFilter, postings]); // 필터나 게시글 목록이 변경될 때마다 실행
 
     const handlePostingClick = (postId: number) => {
-        // FIXME: 아래 코드는 임시로 작성한 코드입니다
-        // 실제로는 서버에서 카페 정보를 가져와야 합니다.
         const selected = postings.find(posting => posting.id === postId);
         if (selected) {
             setSelectedPosting(selected);

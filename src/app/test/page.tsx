@@ -20,7 +20,7 @@ const Page = () => {
             }}
         >
             <CafeViewer
-                cafeName="레드버튼 부산대점"
+                name="레드버튼 부산대점"
                 phoneNumber="051-515-1234"
                 roadAddress="부산 금정구 금정로 75"
                 addressDetail="레드버튼 부산대점"

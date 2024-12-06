@@ -7,13 +7,68 @@ import CafeMap from '@/components/CafeMap';
 import CafeList from '@/components/CafeList';
 import React, { useState, useEffect } from 'react';
 import CafeViewer from "@/components/CafeViewer";
-import { Cafe } from '@/types'; // types.ts에서 Cafe 인터페이스를 가져옴
+import { Cafe, CafeSimple } from '@/types';
+import { getCafeAll, getCafeById } from "@/app/api/cafe";
 
 const Page = () => {
-    const [selectedCafe, setSelectedCafe] = useState<Cafe | null>(null); // 타입 설정
-    const [selectedPosting, setSelectedPosting] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCafe, setSelectedCafe] = useState<Cafe | null>(null); // Selected Cafe details
+    const [selectedPosting, setSelectedPosting] = useState(null); // Selected posting for modal
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal open state
+    const [cafes, setCafes] = useState<CafeSimple[]>([]); // List of cafes
+    const [isLoading, setIsLoading] = useState(false); // Loading state for API
+    const [error, setError] = useState<string | null>(null); // Error state
 
+    // Fetch all cafes on component mount
+    useEffect(() => {
+        const fetchCafes = async () => {
+            setIsLoading(true);
+            try {
+                const res = await getCafeAll();
+                if (Array.isArray(res)) {
+                    setCafes(res);
+                } else {
+                    throw new Error("Invalid response format");
+                }
+            } catch (err: any) {
+                console.error("Error fetching cafes:", err);
+                setError(err.message || "Failed to load cafes.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCafes();
+    }, []);
+
+
+
+    // Automatically select the first cafe when the list changes
+    useEffect(() => {
+        if (cafes.length > 0) {
+            handleCafeClick(cafes[0]);
+        }
+    }, [cafes]);
+
+    // Fetch selected cafe details
+    const handleCafeClick = async (cafe: Cafe) => {
+        let id = cafe.id;
+        console.log("handleCafeClick received:", id); // 로그 추가
+        if (typeof id !== 'number') {
+            console.error("Invalid cafe ID:", id);
+            setError("Invalid cafe ID.");
+            return;
+        }
+
+        try {
+            const res = await getCafeById(id);
+            setSelectedCafe(res);
+        } catch (err: any) {
+            console.error("Error fetching cafe details:", err);
+            setError(err.message || "Failed to load cafe details.");
+        }
+    };
+
+    // Handle modal interactions
     const handlePostingClick = (posting: any) => {
         setSelectedPosting(posting);
         setIsModalOpen(true);
@@ -23,51 +78,6 @@ const Page = () => {
         setSelectedPosting(null);
         setIsModalOpen(false);
     };
-
-    const handleCafeClick = (cafeId: number) => {
-        // FIXME: 아래 코드는 임시로 작성한 코드입니다
-        // 실제로는 서버에서 카페 정보를 가져와야 합니다.
-        setSelectedCafe({
-            cafeName: '레드버튼 부산대점',
-            phoneNumber: '051-515-1234',
-            roadAddress: '부산 금정구 금정로 75',
-            addressDetail: '레드버튼 부산대점',
-            latitude: 35.2314175247574,
-            longitude: 129.086345000906,
-            placeUrl: 'http://place.map.kakao.com/445393846',
-            outletCount: 10,
-            maxPeoplePerTable: 4,
-            notice: '안녕하세요 ~ :) 유일무이 카페입니다. 커피 1번 리필 가능해요~! 얼마전에 오픈했으니 자주 와주세요!',
-            isWifi: true,
-            reviewResponse: [
-                {
-                    id: 2,
-                    cafeId: 1,
-                    content: '공부하기 꽤 괜찮네요.',
-                    createdAt: '2024-12-06T00:19:53.602633',
-                },
-                {
-                    id: 3,
-                    cafeId: 1,
-                    content: '수영이언니랑 마라탕 먹고 싶네요.',
-                    createdAt: '2024-12-06T00:19:53.602633',
-                },
-                {
-                    id: 4,
-                    cafeId: 1,
-                    content: '서연이랑 신전떡볶이 먹고 싶네요.',
-                    createdAt: '2024-12-06T00:19:53.602633',
-                }
-            ]
-        });
-    };
-
-    // 페이지가 로드될 때 첫 번째 카페를 자동으로 선택
-    useEffect(() => {
-        // FIXME: 아래 코드는 임시로 작성한 코드입니다
-        const firstCafeId = 1;
-        handleCafeClick(firstCafeId);
-    }, []);
 
     return (
         <Box
@@ -91,6 +101,7 @@ const Page = () => {
                     mt: 3,
                 }}
             >
+                {/* Cafe Map Section */}
                 <Box sx={{ mb: 4 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                         <CardMedia
@@ -103,18 +114,21 @@ const Page = () => {
                             지도
                         </Typography>
                     </Box>
-                    {selectedCafe && (
+                    {selectedCafe ? (
                         <CafeMap
-                            name={selectedCafe.cafeName}
+                            name={selectedCafe.name}
                             address={selectedCafe.roadAddress}
                             kakaoLink={selectedCafe.placeUrl}
                             latitude={selectedCafe.latitude}
                             longitude={selectedCafe.longitude}
                             onPlaceButtonClick={() => handlePostingClick(selectedCafe)}
                         />
+                    ) : (
+                        <Typography>Loading map...</Typography>
                     )}
                 </Box>
 
+                {/* Cafe List Section */}
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
                     <CardMedia
                         component="img"
@@ -142,44 +156,24 @@ const Page = () => {
                             overflowY: 'auto',
                         }}
                     >
-                        <CafeList
-                            cafes={[
-                                // FIXME: 아래 코드는 임시로 작성한 코드입니다
-                                // 실제로는 서버에서 카페 목록을 가져와야 합니다.
-                                {
-                                    name: '레드버튼 부산대',
-                                    distance: 5,
-                                    id: 1,
-                                },
-                                {
-                                    name: '레드버튼 부산대',
-                                    distance: 5,
-                                    id: 2,
-                                },
-                                {
-                                    name: '레드버튼 부산대',
-                                    distance: 5,
-                                    id: 3,
-                                },
-                                {
-                                    name: '레드버튼 부산대',
-                                    distance: 5,
-                                    id: 4,
-                                },
-                                {
-                                    name: '레드버튼 부산대',
-                                    distance: 5,
-                                    id: 5,
-                                }
-                            ]}
-                            onCafeClick={handleCafeClick}
-                        />
+                        {isLoading ? (
+                            <Typography>Loading cafes...</Typography>
+                        ) : error ? (
+                            <Typography color="error">{error}</Typography>
+                        ) : (
+                            <CafeList
+                                cafes={cafes}
+                                onCafeClick={(cafeId: number) => handleCafeClick(cafeId)} // 정확히 id만 전달
+                            />
+                        )}
                     </Box>
                 </Box>
             </Box>
 
+            {/* Navigation Component */}
             <Navigation />
 
+            {/* Modal Component */}
             <Backdrop
                 open={isModalOpen}
                 sx={{
@@ -195,12 +189,8 @@ const Page = () => {
                 onClick={closeModal}
             >
                 {selectedPosting && (
-                    <Box
-                        onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 방지
-                    >
-                        <CafeViewer
-                            {...selectedPosting}
-                        />
+                    <Box onClick={(e) => e.stopPropagation()}>
+                        <CafeViewer {...selectedPosting} />
                     </Box>
                 )}
             </Backdrop>

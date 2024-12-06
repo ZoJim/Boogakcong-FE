@@ -1,5 +1,6 @@
 export interface Cafe {
-    cafeName: string;
+    id: number;
+    name: string;
     phoneNumber: string;
     roadAddress: string;
     addressDetail: string;
@@ -18,10 +19,10 @@ export interface Cafe {
     }[];
 }
 
-export interface CafeList{
+export interface CafeSimple {
     id: number;
     name: string;
-    distance: number;
+    timeFromMainGate: number;
 }
 
 export interface CafeReview {
