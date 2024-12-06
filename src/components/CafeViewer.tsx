@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Box, Button, Card, CardMedia, TextField, Typography } from '@mui/material';
+import React, {useState} from 'react';
+import {Box, Button, Card, CardMedia, TextField, Typography} from '@mui/material';
 import KakaoMap from '@/components/KakaoMap';
-import { blue, grey } from "@mui/material/colors";
+import {blue, grey} from "@mui/material/colors";
 
 interface CafeViewerProps {
     cafeName: string;
@@ -44,11 +44,12 @@ const CafeViewer = (
     const [newComment, setNewComment] = useState('');
 
     const handleCommentSubmit = () => {
-        // Placeholder for API integration
+        // FIXME: Implement API integration
         console.log({
             cafeId: 1, // Replace with actual cafeId
             content: newComment,
         });
+
         setNewComment(''); // Clear the input field
     };
 
@@ -150,45 +151,62 @@ const CafeViewer = (
                     ''
                 )}
             </Box>
-            {reviewResponse && reviewResponse.length > 0 && (
-                <Box
+            { /* 스크롤 영역 */}
+
+            <Box
+                sx={{
+                    width: '100%',
+                    mt: 3,
+                }}
+            >
+                <Typography
+                    variant="h2"
                     sx={{
-                        marginTop: 3,
-                        width: '100%',
-                        textAlign: 'left',
+                        marginBottom: 1,
                     }}
                 >
-                    <Typography
-                        variant="h6"
+                    간단 리뷰
+                </Typography>
+                <Box
+                    sx={{
+                        flex: 1,
+                        overflowY: 'auto',
+                        maxHeight: '110px',
+                        width: '100%',
+                    }}
+                >
+                {reviewResponse && reviewResponse.length > 0 && (
+                    <Box
                         sx={{
-                            marginBottom: 1,
+                            width: '100%',
+                            textAlign: 'left',
                         }}
                     >
-                        후기
-                    </Typography>
-                    {reviewResponse.map((review) => (
-                        <Box
-                            key={review.id}
-                            sx={{
-                                marginBottom: 2,
-                                padding: 2,
-                                backgroundColor: '#f9f9f9',
-                                borderRadius: 2,
-                                boxShadow: 'inset 0 2px 5px rgba(0, 0, 0, 0.1)',
-                            }}
-                        >
-                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                                {review.content}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'gray' }}>
-                                {new Date(review.createdAt).toLocaleString()}
-                            </Typography>
-                        </Box>
-                    ))}
+                        {reviewResponse.map((review) => (
+                            <Box
+                                key={review.id}
+                                sx={{
+                                    marginBottom: 2,
+                                    padding: 2,
+                                    backgroundColor: '#f9f9f9',
+                                    borderRadius: 2,
+                                    boxShadow: 'inset 0 2px 5px rgba(0, 0, 0, 0.1)',
+                                }}
+                            >
+                                <Typography variant="body2" sx={{fontWeight: 'bold'}}>
+                                    {review.content}
+                                </Typography>
+                                <Typography variant="caption" sx={{color: 'gray'}}>
+                                    {new Date(review.createdAt).toLocaleString()}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                )}
                 </Box>
-            )}
-            <Box sx={{ width: '100%', marginTop: 3 }}>
-                {isLoggedIn ? (
+            </Box>
+            <Box sx={{width: '100%', marginTop: 3}}>
+                {!isLoggedIn ? (
                     <Box
                         sx={{
                             display: 'flex',
@@ -200,17 +218,17 @@ const CafeViewer = (
                         <TextField
                             fullWidth
                             variant="outlined"
-                            placeholder="댓글을 입력하세요."
+                            placeholder="간단 리뷰를 남겨주세요!"
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
                             multiline
                             disabled={!isLoggedIn}
-                            rows={3}
+                            rows={1}
                         />
                         <Button
                             variant="contained"
                             onClick={handleCommentSubmit}
-                            sx ={{
+                            sx={{
                                 backgroundColor: blue[200],
                                 color: '#FFFFFF',
                                 '&:hover': {
@@ -230,7 +248,7 @@ const CafeViewer = (
                             mb: 2,
                         }}
                     >
-                        로그인을 하셔야 댓글을 작성할 수 있습니다.
+                        로그인을 해야 댓글을 작성할 수 있어요 :)
                     </Typography>
                 )}
             </Box>
