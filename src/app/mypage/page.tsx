@@ -24,7 +24,8 @@ const Page = () => {
     // 샘플 데이터
     const userInfo = {
         name: '홍길동',
-        role: '카페 소유자',
+        role: '일반 유저',
+        //role: '카페 소유자',
         email: 'gildong@gmail.com',
     };
 
@@ -65,7 +66,7 @@ const Page = () => {
         >
             {/* User Info */}
             <Box sx={{ width: '100%', px: 3, mb: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5, mt: 0, mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1 }}>
                     <CardMedia
                         component="img"
                         src="/images/mypage_white.png"
