@@ -25,7 +25,7 @@ const CafeItem = ({ cafe }: CafeItemProps) => {
                 borderRadius: '8px',
                 boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",
                 backgroundColor: '#ffffff',
-                width: "350px",
+                width: "340px",
                 height: "50px",
                 margin: '8px auto',
                 cursor: 'pointer',
@@ -71,9 +71,10 @@ const CafeList = ({ cafes }: CafeListProps) => {
     return (
         <Box
             sx={{
+                alignItems: 'center',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 1,
+                gap: 0.1,
                 padding: '8px',
             }}
         >
