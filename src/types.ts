@@ -47,3 +47,19 @@ export enum PostType {
     RECRUITMENT = 'RECRUITMENT',
     REVIEW = 'REVIEW',
 }
+
+
+export interface User {
+    id: number;
+    email: string;
+    name: string;
+    phoneNumber: string;
+    role: UserRole;
+}
+
+export enum UserRole {
+    ROLE_NORMAL_USER = "일반 유저",
+    ROLE_CAFE_OWNER = '카페 소유자',
+    ROLE_COMMUNITY_MANAGER = '커뮤니티 매니저',
+    ROLE_ADMIN = `어드민`,
+}

@@ -1,43 +1,49 @@
 'use client';
 
-import { keyframes } from '@emotion/react';
+import React, { useState, useEffect } from 'react';
 import { Box, CardMedia, Typography } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import Navigation from '@/components/Navigation';
 import PostingList from '@/components/PostingList';
 import ShortReview from '@/components/ShortReview';
 import UserInfo from '@/components/UserInfo';
-
-const float = keyframes`
-    0% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-    100% {
-        transform: translateY(0);
-    }
-`;
+import { getUser } from '@/app/api/user';
+import { useAtomValue } from 'jotai';
+import { accessTokenAtom } from '@/state/authAtom';
+import {UserRole} from "@/types";
 
 const Page = () => {
-    // 샘플 데이터
-    const userInfo = {
-        name: '홍길동',
-        role: '일반 유저',
-        //role: '카페 소유자',
-        email: 'gildong@gmail.com',
-    };
+    const token = useAtomValue(accessTokenAtom); // Access Token 가져오기
+    const [userInfo, setUserInfo] = useState<{
+        name: string;
+        role: UserRole;
+        email: string;
+    } | null>(null);
+    const [error, setError] = useState<string | null>(null); // 에러 상태 관리
 
-    const reviews = [
-        {
-            id: 2,
-            cafeId: 1,
-            cafeName: '정지민카페',
-            content: '공부하기 꽤 괜찮네요.',
-            createdAt: '2024-12-06T00:19:53.602633',
-        },
-    ];
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            if (!token) {
+                setError('로그인이 필요합니다.');
+                return;
+            }
+
+            try {
+                const user = await getUser(token);
+                setUserInfo({
+                    name: user.name,
+                    role: user.role,
+                    email: user.email,
+                });
+                setError(null); // 에러 초기화
+            } catch (err: any) {
+                console.error('Error fetching user info:', err);
+                setError('사용자 정보를 가져오는 데 실패했습니다.');
+            }
+        };
+
+        fetchUserInfo();
+    }, [token]);
 
     const handleEditCafe = () => {
         console.log('내 카페 수정 클릭됨');
@@ -46,11 +52,6 @@ const Page = () => {
     const handleDeleteCafe = () => {
         console.log('카페 삭제 요청 클릭됨');
     };
-
-    const handleEdit = (id: number) => {
-        console.log(`Edit review with ID: ${id}`);
-        // 수정 로직 추가 가능
-      };
 
     return (
         <Box
@@ -64,27 +65,36 @@ const Page = () => {
                 bgcolor: blue[200],
             }}
         >
+            {/* Error Message */}
+            {error && (
+                <Typography color="error" sx={{ mb: 2 }}>
+                    {error}
+                </Typography>
+            )}
+
             {/* User Info */}
-            <Box sx={{ width: '100%', px: 3, mb: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1 }}>
-                    <CardMedia
-                        component="img"
-                        src="/images/mypage_white.png"
-                        alt="회원 정보"
-                        sx={{ width: 20, height: 20, mr: 1 }}
+            {userInfo && (
+                <Box sx={{ width: '100%', px: 3, mb: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1 }}>
+                        <CardMedia
+                            component="img"
+                            src="/images/mypage_white.png"
+                            alt="회원 정보"
+                            sx={{ width: 20, height: 20, mr: 1 }}
+                        />
+                        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
+                            회원 정보
+                        </Typography>
+                    </Box>
+                    <UserInfo
+                        name={userInfo.name}
+                        role={UserRole[userInfo.role] } // 열거형을 활용해 한글값 가져오기
+                        email={userInfo.email}
+                        onEditCafe={handleEditCafe}
+                        onDeleteCafe={handleDeleteCafe}
                     />
-                    <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
-                        회원 정보
-                    </Typography>
                 </Box>
-                <UserInfo
-                    name={userInfo.name}
-                    role={userInfo.role}
-                    email={userInfo.email}
-                    onEditCafe={handleEditCafe}
-                    onDeleteCafe={handleDeleteCafe}
-                />
-            </Box>
+            )}
 
             {/* 내가 쓴 후기 */}
             <Box sx={{ width: '100%', px: 3 }}>

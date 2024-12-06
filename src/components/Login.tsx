@@ -5,8 +5,8 @@ import { Box, Button, TextField, Typography, Card } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation'; // Next.js의 useRouter import
-import { accessTokenAtom, refreshTokenAtom } from '@/state/authAtom'; // Jotai Atom
-import { login } from '@/app/api/login'; // 로그인 API 요청 함수
+import { login } from '@/app/api/login';
+import {accessTokenAtom, refreshTokenAtom} from "@/state/authAtom"; // 로그인 API 요청 함수
 
 const Login = () => {
     const [email, setEmail] = useState('');
