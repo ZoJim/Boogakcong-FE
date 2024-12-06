@@ -34,6 +34,7 @@ const PostingList = ({ title, content, createdAt, imageUrl }: PostingListProps) 
                 flexDirection: "row", // 가로 레이아웃으로 변경
                 justifyContent: "space-between",
                 backgroundColor: "#fff",
+                marginBottom: 1
             }}
         >
             {/* 이미지 섹션 */}
