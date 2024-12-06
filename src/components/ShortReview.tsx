@@ -7,11 +7,13 @@ interface ShortReviewProps {
     cafeName: string;
     content: string;
     createdAt: string;
+    onClick?: () => void;
 }
 
-const ShortReview = ({ cafeId, cafeName, content, createdAt }) => {
+const ShortReview = ({ cafeId, cafeName, content, createdAt, onClick }) => {
   return (
     <Card
+        onClick={onClick}
       sx={{
         width: 350,
         height: 55,
@@ -21,6 +23,7 @@ const ShortReview = ({ cafeId, cafeName, content, createdAt }) => {
         borderRadius: '12px',
         marginBottom: 1,
         padding: 2, // 내부 패딩 추가
+
       }}
     >
       <CardContent

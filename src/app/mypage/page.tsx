@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, CardMedia, Typography } from '@mui/material';
+import {Backdrop, Box, Button, CardMedia, TextField, Typography} from '@mui/material';
 import { blue } from '@mui/material/colors';
 import Navigation from '@/components/Navigation';
 import PostingList from '@/components/PostingList';
 import ShortReview from '@/components/ShortReview';
 import UserInfo from '@/components/UserInfo';
 import { getUser } from '@/app/api/user'; // getMyReview 추가
-import { getMyReview } from '@/app/api/review';
+import {deleteReview, getMyReview, updateReview} from '@/app/api/review';
 import { useAtomValue } from 'jotai';
 import { accessTokenAtom } from '@/state/authAtom';
 import { UserRole } from '@/types';
@@ -30,6 +30,48 @@ const Page = () => {
     >([]);
 
     const [error, setError] = useState<string | null>(null); // 에러 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+    const [selectedReview, setSelectedReview] = useState<{
+        id: number;
+        content: string;
+    } | null>(null); // 현재 수정 중인 리뷰
+    const openEditModal = (reviewId: number, currentContent: string) => {
+        setSelectedReview({ id: reviewId, content: currentContent });
+        setIsModalOpen(true);
+    };
+
+    const handleSaveReview = async () => {
+        if (!selectedReview || !token) return;
+
+        try {
+            await updateReview(token, selectedReview.id, selectedReview.content);
+            setReviews((prev) =>
+                prev.map((review) =>
+                    review.id === selectedReview.id ? { ...review, content: selectedReview.content } : review
+                )
+            );
+            closeEditModal();
+        } catch (err: any) {
+            console.error('Error updating review:', err);
+        }
+    };
+
+    const handleDeleteReview = async () => {
+        if (!selectedReview || !token) return;
+
+        try {
+            await deleteReview(token, selectedReview.id);
+            setReviews((prev) => prev.filter((review) => review.id !== selectedReview.id));
+            closeEditModal();
+        } catch (err: any) {
+            console.error('Error deleting review:', err);
+        }
+    };
+
+    const closeEditModal = () => {
+        setSelectedReview(null);
+        setIsModalOpen(false);
+    };
 
     // Fetch user info
     useEffect(() => {
@@ -179,6 +221,11 @@ const Page = () => {
                             cafeName={review.cafeName}
                             content={review.content}
                             createdAt={review.createdAt}
+                            onClick={() =>
+                                // console.log('리뷰 수정 클릭됨', review.id, review.content)
+                                openEditModal(review.id, review.content)
+                        } // 모달 열기
+
                         />
                     ))
                 ) : (
@@ -221,6 +268,53 @@ const Page = () => {
 
             {/* 네비게이션 */}
             <Navigation />
+
+            {/* 리뷰 수정 모달 */}
+            <Backdrop
+                open={isModalOpen}
+                sx={{
+                    zIndex: 1000,
+                    flexDirection: 'column',
+                    color: '#fff',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backdropFilter: 'blur(4px)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                }}
+                onClick={closeEditModal}
+            >
+                {selectedReview && (
+                    <Box
+                        sx={{
+                            backgroundColor: '#fff',
+                            padding: 4,
+                            borderRadius: 4,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 2,
+                            width: 400,
+                        }}
+                        onClick={(e) => e.stopPropagation()} // 클릭 전파 방지
+                    >
+                        <Typography variant="h6">리뷰 수정</Typography>
+                        <TextField
+                            value={selectedReview.content}
+                            onChange={(e) =>
+                                setSelectedReview((prev) => (prev ? { ...prev, content: e.target.value } : prev))
+                            }
+                            multiline
+                            rows={4}
+                        />
+                        <Button variant="contained" onClick={handleSaveReview}>
+                            저장
+                        </Button>
+                        <Button variant="contained" onClick={handleDeleteReview}>
+                            삭제
+                        </Button>
+                    </Box>
+                )}
+            </Backdrop>
         </Box>
     );
 };
