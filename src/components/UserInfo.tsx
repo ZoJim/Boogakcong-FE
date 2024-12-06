@@ -7,10 +7,11 @@ interface UserInfoProps {
     role: string;
     email: string;
     onEditCafe?: () => void; // 내 카페 수정 버튼 클릭 핸들러
+    onRegisterCafe?: () => void; // 카페 등록 버튼 클릭 핸들러
     onDeleteCafe?: () => void; // 카페 삭제 요청 클릭 핸들러
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onDeleteCafe }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe }) => {
     return (
         <Paper
             sx={{
@@ -45,9 +46,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onDe
                         bgcolor: blue[200],
                         '&:hover': { bgcolor: blue[700] },
                     }}
-                    onClick={onEditCafe}
+                    onClick={role === '카페 소유자' ? onEditCafe : onRegisterCafe}
                 >
-                    내 카페 수정
+                    {role === '카페 소유자' ? '내 카페 수정' : '카페 등록'}
                 </Button>
             </Box>
 
