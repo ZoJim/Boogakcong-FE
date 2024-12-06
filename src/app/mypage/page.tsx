@@ -1,21 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {Backdrop, Box, Button, CardMedia, TextField, Typography} from '@mui/material';
-import { blue } from '@mui/material/colors';
+import {blue} from '@mui/material/colors';
 import Navigation from '@/components/Navigation';
 import PostingList from '@/components/PostingList';
 import ShortReview from '@/components/ShortReview';
 import UserInfo from '@/components/UserInfo';
-import { getUser } from '@/app/api/user'; // getMyReview 추가
+import {getUser} from '@/app/api/user';
 import {deleteReview, getMyReview, updateReview} from '@/app/api/review';
-import { useAtomValue } from 'jotai';
-import { accessTokenAtom } from '@/state/authAtom';
-import { UserRole } from '@/types';
-import {getMyPost} from "@/app/api/post";
+import {useAtomValue} from 'jotai';
+import {accessTokenAtom} from '@/state/authAtom';
+import {Posting, UserRole} from '@/types';
+import {getMyPost} from '@/app/api/post';
+import PostingViewer from '@/components/PostViewer';
 
 const Page = () => {
-    const token = useAtomValue(accessTokenAtom); // Access Token 가져오기
+    const token = useAtomValue(accessTokenAtom);
     const [userInfo, setUserInfo] = useState<{
         name: string;
         role: UserRole;
@@ -24,20 +25,40 @@ const Page = () => {
     const [reviews, setReviews] = useState<
         { id: number; cafeName: string; content: string; createdAt: string }[]
     >([]);
-
-    const [post, setPost] = useState<
-        { id: number; cafeName: string; content: string; createdAt: string }[]
+    const [posts, setPosts] = useState<
+        { id: number; title: string; content: string; createdAt: string; imageUrl: string }[]
     >([]);
+    const [error, setError] = useState<string | null>(null);
 
-    const [error, setError] = useState<string | null>(null); // 에러 상태 관리
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [selectedReview, setSelectedReview] = useState<{
         id: number;
         content: string;
-    } | null>(null); // 현재 수정 중인 리뷰
-    const openEditModal = (reviewId: number, currentContent: string) => {
-        setSelectedReview({ id: reviewId, content: currentContent });
-        setIsModalOpen(true);
+    } | null>(null);
+
+    const [isPostingModalOpen, setIsPostingModalOpen] = useState(false);
+    const [selectedPosting, setSelectedPosting] = useState<Posting | null>(null);
+
+    const openReviewModal = (reviewId: number, currentContent: string) => {
+        setSelectedReview({id: reviewId, content: currentContent});
+        setIsReviewModalOpen(true);
+    };
+
+    const openPostingModal = (post: Posting) => {
+        setSelectedPosting(post);
+        setIsPostingModalOpen(true);
+    };
+
+    const closeReviewModal = (e: React.MouseEvent) => {
+        e.stopPropagation(); // 클릭 이벤트 전파 방지
+        setSelectedReview(null);
+        setIsReviewModalOpen(false);
+    };
+
+    const closePostingModal = (e: React.MouseEvent) => {
+        e.stopPropagation(); // 클릭 이벤트 전파 방지
+        setSelectedPosting(null);
+        setIsPostingModalOpen(false);
     };
 
     const handleSaveReview = async () => {
@@ -47,11 +68,11 @@ const Page = () => {
             await updateReview(token, selectedReview.id, selectedReview.content);
             setReviews((prev) =>
                 prev.map((review) =>
-                    review.id === selectedReview.id ? { ...review, content: selectedReview.content } : review
+                    review.id === selectedReview.id ? {...review, content: selectedReview.content} : review
                 )
             );
-            closeEditModal();
-        } catch (err: any) {
+            setIsReviewModalOpen(false);
+        } catch (err) {
             console.error('Error updating review:', err);
         }
     };
@@ -62,18 +83,12 @@ const Page = () => {
         try {
             await deleteReview(token, selectedReview.id);
             setReviews((prev) => prev.filter((review) => review.id !== selectedReview.id));
-            closeEditModal();
-        } catch (err: any) {
+            setIsReviewModalOpen(false);
+        } catch (err) {
             console.error('Error deleting review:', err);
         }
     };
 
-    const closeEditModal = () => {
-        setSelectedReview(null);
-        setIsModalOpen(false);
-    };
-
-    // Fetch user info
     useEffect(() => {
         const fetchUserInfo = async () => {
             if (!token) {
@@ -88,8 +103,8 @@ const Page = () => {
                     role: user.role,
                     email: user.email,
                 });
-                setError(null); // 에러 초기화
-            } catch (err: any) {
+                setError(null);
+            } catch (err) {
                 console.error('Error fetching user info:', err);
                 setError('사용자 정보를 가져오는 데 실패했습니다.');
             }
@@ -98,7 +113,6 @@ const Page = () => {
         fetchUserInfo();
     }, [token]);
 
-    // Fetch reviews written by the user
     useEffect(() => {
         const fetchMyReviews = async () => {
             if (!token) return;
@@ -113,7 +127,7 @@ const Page = () => {
                         createdAt: review.createdAt,
                     }))
                 );
-            } catch (err: any) {
+            } catch (err) {
                 console.error('Error fetching my reviews:', err);
             }
         };
@@ -121,41 +135,28 @@ const Page = () => {
         fetchMyReviews();
     }, [token]);
 
-
-    // Fetch posts written by the user
-
     useEffect(() => {
         const fetchMyPosts = async () => {
             if (!token) return;
 
             try {
                 const response = await getMyPost(token);
-                setPost(
+                setPosts(
                     response.map((post: any) => ({
                         id: post.id,
                         title: post.title,
                         content: post.content,
-                        userId: post.userId,
-                        postType: post.postType,
-                        imageUrl: post.imageUrl,
                         createdAt: post.createdAt,
+                        imageUrl: post.imageUrl,
                     }))
                 );
-            } catch (err: any) {
-                console.error('Error fetching my reviews:', err);
+            } catch (err) {
+                console.error('Error fetching my posts:', err);
             }
         };
 
         fetchMyPosts();
     }, [token]);
-
-    const handleEditCafe = () => {
-        console.log('내 카페 수정 클릭됨');
-    };
-
-    const handleDeleteCafe = () => {
-        console.log('카페 삭제 요청 클릭됨');
-    };
 
     return (
         <Box
@@ -169,24 +170,22 @@ const Page = () => {
                 bgcolor: blue[200],
             }}
         >
-            {/* Error Message */}
             {error && (
-                <Typography color="error" sx={{ mb: 2 }}>
+                <Typography color="error" sx={{mb: 2}}>
                     {error}
                 </Typography>
             )}
 
-            {/* User Info */}
             {userInfo && (
-                <Box sx={{ width: '100%', px: 3, mb: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1 }}>
+                <Box sx={{width: '100%', px: 3, mb: 1}}>
+                    <Box sx={{display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1}}>
                         <CardMedia
                             component="img"
                             src="/images/mypage_white.png"
                             alt="회원 정보"
-                            sx={{ width: 20, height: 20, mr: 1 }}
+                            sx={{width: 20, height: 20, mr: 1}}
                         />
-                        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
+                        <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff'}}>
                             회원 정보
                         </Typography>
                     </Box>
@@ -194,26 +193,14 @@ const Page = () => {
                         name={userInfo.name}
                         role={UserRole[userInfo.role]}
                         email={userInfo.email}
-                        onEditCafe={handleEditCafe}
-                        onDeleteCafe={handleDeleteCafe}
                     />
                 </Box>
             )}
 
-            {/* 내가 쓴 후기 */}
-            <Box sx={{ width: '100%', px: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 0 }}>
-                    <CardMedia
-                        component="img"
-                        src="/images/list.png"
-                        alt="내가 쓴 후기"
-                        sx={{ width: 30, height: 30, mr: 1 }}
-                    />
-                    <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
-                        내가 쓴 후기
-                    </Typography>
-                </Box>
-
+            <Box sx={{width: '100%', px: 3}}>
+                <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff', mb: 2}}>
+                    내가 쓴 후기
+                </Typography>
                 {reviews.length > 0 ? (
                     reviews.map((review) => (
                         <ShortReview
@@ -222,96 +209,75 @@ const Page = () => {
                             content={review.content}
                             createdAt={review.createdAt}
                             onClick={() =>
-                                // console.log('리뷰 수정 클릭됨', review.id, review.content)
-                                openEditModal(review.id, review.content)
-                        } // 모달 열기
-
+                                openReviewModal(review.id, review.content)
+                        }
                         />
                     ))
                 ) : (
-                    <Typography sx={{ color: '#ffffff', mt: 2 }}>
-                        아직 작성한 리뷰가 없습니다.
-                    </Typography>
+                    <Typography sx={{color: '#ffffff'}}>아직 작성한 리뷰가 없습니다.</Typography>
                 )}
             </Box>
 
-            {/* 내가 쓴 게시글 */}
-            <Box sx={{ width: '100%', px: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 0 }}>
-                    <CardMedia
-                        component="img"
-                        src="/images/list.png"
-                        alt="내가 쓴 게시글"
-                        sx={{ width: 30, height: 30, mr: 1 }}
-                    />
-                    <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
-                        내가 쓴 게시글
-                    </Typography>
-                </Box>
-
-                {post.length > 0 ? (
-                    post.map((post) => (
+            <Box sx={{width: '100%', px: 3}}>
+                <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff', mb: 2}}>
+                    내가 쓴 게시글
+                </Typography>
+                {posts.length > 0 ? (
+                    posts.map((post) => (
                         <PostingList
                             key={post.id}
                             title={post.title}
                             content={post.content}
                             createdAt={post.createdAt}
                             imageUrl={post.imageUrl}
+                            onClick={() => openPostingModal(post)}
                         />
                     ))
                 ) : (
-                    <Typography sx={{ color: '#ffffff', mt: 2 }}>
-                        아직 작성한 게시글이 없습니다.
-                    </Typography>
+                    <Typography sx={{color: '#ffffff'}}>아직 작성한 게시글이 없습니다.</Typography>
                 )}
             </Box>
 
-            {/* 네비게이션 */}
-            <Navigation />
+            <Navigation/>
 
-            {/* 리뷰 수정 모달 */}
-            <Backdrop
-                open={isModalOpen}
-                sx={{
-                    zIndex: 1000,
-                    flexDirection: 'column',
-                    color: '#fff',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backdropFilter: 'blur(4px)',
-                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                }}
-                onClick={closeEditModal}
-            >
+            <Backdrop open={isReviewModalOpen} onClick={closeReviewModal}>
                 {selectedReview && (
                     <Box
                         sx={{
                             backgroundColor: '#fff',
-                            padding: 4,
-                            borderRadius: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 2,
-                            width: 400,
+                            p: 3,
+                            borderRadius: 2,
+                            width: '400px',
                         }}
-                        onClick={(e) => e.stopPropagation()} // 클릭 전파 방지
+                        onClick={(e) => e.stopPropagation()} // 클릭 이벤트 전파 방지
                     >
                         <Typography variant="h6">리뷰 수정</Typography>
                         <TextField
+                            fullWidth
                             value={selectedReview.content}
                             onChange={(e) =>
-                                setSelectedReview((prev) => (prev ? { ...prev, content: e.target.value } : prev))
+                                setSelectedReview((prev) => (prev ? {...prev, content: e.target.value} : prev))
                             }
                             multiline
                             rows={4}
                         />
-                        <Button variant="contained" onClick={handleSaveReview}>
-                            저장
-                        </Button>
-                        <Button variant="contained" onClick={handleDeleteReview}>
-                            삭제
-                        </Button>
+                        <Button onClick={handleSaveReview} sx={{mt: 2}}>저장</Button>
+                        <Button onClick={handleDeleteReview} sx={{mt: 2}}>삭제</Button>
+                    </Box>
+                )}
+            </Backdrop>
+
+            <Backdrop open={isPostingModalOpen} onClick={closePostingModal}>
+                {selectedPosting && (
+                    <Box
+                        sx={{
+                            borderRadius: 4,
+                            backgroundColor: '#fff',
+                            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                        }}
+                        onClick={(e) => e.stopPropagation()} // 클릭 이벤트 전파 방지
+                    >
+                        <PostingViewer {...selectedPosting} />
                     </Box>
                 )}
             </Backdrop>

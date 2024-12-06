@@ -5,6 +5,7 @@ interface PostingListProps {
     content: string;
     createdAt: string;
     imageUrl: string;
+    onClick?: () => void;
 }
 
 const formatDate = (isoDate: string): string => {
@@ -21,9 +22,10 @@ const truncateText = (text: string | null | undefined, maxLength: number): strin
     if (!text) return "";
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
-const PostingList = ({ title, content, createdAt, imageUrl }: PostingListProps) => {
+const PostingList = ({ title, content, createdAt, imageUrl, onClick }: PostingListProps) => {
     return (
         <Card
+            onClick={onClick}
             sx={{
                 borderRadius: 4,
                 width: 350,
