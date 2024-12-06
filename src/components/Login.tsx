@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography, Link, Card } from "@mui/material";
+import { blue } from "@mui/material/colors";
 
-const Login = () => {
+interface LoginProps {
+  onNavigate: (page: string) => void; // 페이지 전환 함수
+}
+
+const Login = ({ onNavigate }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,7 +21,7 @@ const Login = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "100vh"
+        minHeight: "100vh",
       }}
     >
       <Card
@@ -34,13 +39,13 @@ const Login = () => {
           padding: 3,
         }}
       >
-        {/* JOIN Title */}
+        {/* Title */}
         <Typography
-          variant="h3"
-          style={{ fontSize: "32px" }} // 인라인 스타일로 폰트 크기 설정
+          variant="h1"
+          style={{ fontSize: "36px" }}
           sx={{
             fontWeight: "bold",
-            color: "#2196F3"
+            color: blue[500],
           }}
         >
           JOIN
@@ -48,28 +53,28 @@ const Login = () => {
 
         {/* Email Field */}
         <TextField
-            label="Email address"
-            placeholder="gildong@gmail.com"
-            sx={{
-                width: '75%',
-                borderRadius: 3,
-                marginBottom: 2,
-                marginTop: 3,
-            }}
+          label="Email address"
+          placeholder="gildong@gmail.com"
+          sx={{
+            width: "75%",
+            borderRadius: 3,
+            marginBottom: 2,
+            marginTop: 3,
+          }}
         />
 
         {/* Password Field */}
         <TextField
-            label="Password"
-            type="password"
-            placeholder="********"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{
-                width: '75%',
-                borderRadius: 3,
-                marginBottom: 2,
-            }}
+          label="Password"
+          type="password"
+          placeholder="********"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{
+            width: "75%",
+            borderRadius: 3,
+            marginBottom: 2,
+          }}
         />
 
         {/* Login Button */}
@@ -78,7 +83,7 @@ const Login = () => {
           fullWidth
           onClick={handleLogin}
           sx={{
-            bgcolor: "#2196F3",
+            bgcolor: blue[500],
             color: "white",
             width: "75%",
             height: 45,
@@ -93,14 +98,15 @@ const Login = () => {
         </Button>
 
         {/* Register Link */}
-        <Typography variant="body2"
-            style={{
-                textDecoration: "underline",
-            }}
-          >
-          <Link href="/register" underline="always" sx={{ color: "black" }}>
-            회원이 아니신가요?
-          </Link>
+        <Typography
+          variant="body2"
+          style={{
+            textDecoration: "underline",
+            cursor: "pointer",
+          }}
+          onClick={() => onNavigate("register")} // 페이지 전환
+        >
+          회원이 아니신가요?
         </Typography>
       </Card>
     </Box>
