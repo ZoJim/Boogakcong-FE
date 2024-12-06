@@ -1,6 +1,7 @@
 import React from 'react';
-import { TextField, Card, CardMedia, Box, Button, CardActions, Typography } from '@mui/material';
+import { Card, CardMedia, Box, Button, Typography } from '@mui/material';
 import { PostType } from "@/types";
+import {blue} from "@mui/material/colors";
 
 interface PostingViewerProps {
     id: number;
@@ -53,48 +54,53 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
                 />
             )}
 
-            <CardActions
+            {/* 태그 */}
+            <Box
                 sx={{
                     display: 'flex',
-                    justifyContent: 'center',
                     width: '100%',
                     padding: 0,
                     marginBottom: 2,
+                    // 왼쪽
+                    alignItems: 'left',
                 }}
             >
-                <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                        borderRadius: '10px',
-                        paddingX: 4,
-                        paddingY: 1,
-                        color: '#FFFFFF',
-                        backgroundColor: '#2196F3',
-                        '&:hover': {
-                            backgroundColor: '#1976D2',
-                        },
-                    }}
-                >
-                    모집글
-                </Button>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                        borderRadius: '10px',
-                        paddingX: 4,
-                        paddingY: 1,
-                        color: '#FFFFFF',
-                        backgroundColor: '#2196F3',
-                        '&:hover': {
-                            backgroundColor: '#1976D2',
-                        },
-                    }}
-                >
-                    후기글
-                </Button>
-            </CardActions>
+                {postType === PostType.RECRUITMENT ? (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{
+                            borderRadius: '10px',
+                            paddingX: 4,
+                            paddingY: 1,
+                            color: '#FFFFFF',
+                            backgroundColor: '#2196F3',
+                            '&:hover': {
+                                backgroundColor: '#1976D2',
+                            },
+                        }}
+                    >
+                        모집글
+                    </Button>
+                ) : (
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        sx={{
+                            borderRadius: '16px',
+                            paddingX: 4,
+                            paddingY: 1,
+                            color: '#FFFFFF',
+                            backgroundColor: blue[200],
+                            '&:hover': {
+                                backgroundColor: blue[300],
+                            },
+                        }}
+                    >
+                        후기글
+                    </Button>
+                )}
+            </Box>
 
             {/* 내용 */}
             <Box sx={{ width: '100%', marginBottom: 4 }}>
