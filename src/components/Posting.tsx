@@ -10,10 +10,9 @@ interface PostingProps {
     content?: string;
     imageUrl?: string;
     isCafe?: boolean;
-    kakaoMap?: KakaoMap;
 }
 
-const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl, isCafe ,kakaoMap }: PostingProps) => {
+const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl, isCafe }: PostingProps) => {
     const [currentTitle, setCurrentTitle] = useState(title || '');
     const [currentContent, setCurrentContent] = useState(content || '');
     const [image, setImage] = useState<File | null>(null); // 이미지 파일 상태
@@ -78,7 +77,7 @@ const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl, isCa
                             marginTop: 4,
                         }}
                     >
-                        {currentTitle}
+                        {isCafe ? title: currentTitle}
                     </Typography>
                 )}
 
@@ -213,76 +212,110 @@ const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl, isCa
                     )
                 )}
 
-                    {/* 모집글, 후기글 버튼 */}
+                {/* 모집글, 후기글 버튼  카페가 아닐 때만 띄움.*/}
+                {!isCafe && (
                     <CardActions
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-end', // 우측 정렬
-                        gap: 0.4,
-                        width: '100%',
-                        marginBottom: 1,
-                    }}
-                >
-                    <Button
-                        variant="outlined"
-                        size="small"
                         sx={{
-                            borderRadius: '20px',
-                            paddingX: 1,
-                            paddingY: 0.7,
-                            borderColor: '#2196F3', // 외곽선 색상
-                            color: '#2196F3', // 텍스트 색상
-                            '&:hover': {
-                                backgroundColor: '#BBDEFB', // hover 효과, #BBDEFB = BLUE/100
-                                borderColor: '#2196F3', // #2196F3 = BLUE/500
-                            },
+                            display: 'flex',
+                            justifyContent: 'center',
+                            width: '100%',
+                            padding: 0,
+                            marginBottom: 2,
                         }}
                     >
-                        모집글
-                    </Button>
-                    <Button
-                        variant="contained"
-                        size="small"
-                        sx={{
-                            borderRadius: '20px',
-                            paddingX: 1,
-                            paddingY: 0.7,
-                            backgroundColor: '#2196F3', // 버튼 배경색
-                            color: '#FFFFFF', // 텍스트 색상
-                            '&:hover': {
-                                backgroundColor: '#1976D2', // hover 효과
-                            },
-                        }}
-                    >
-                        후기글
-                    </Button>
-                </CardActions> 
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{
+                                borderRadius: '10px',
+                                paddingX: 4,
+                                paddingY: 1,
+                                color: '#FFFFFF',
+                                backgroundColor: '#2196F3',
+                                '&:hover': {
+                                    backgroundColor: '#1976D2',
+                                },
+                            }}
+                        >
+                            모집글
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{
+                                borderRadius: '10px',
+                                paddingX: 4,
+                                paddingY: 1,
+                                color: '#FFFFFF',
+                                backgroundColor: '#2196F3',
+                                '&:hover': {
+                                    backgroundColor: '#1976D2',
+                                },
+                            }}
+                        >
+                            후기글
+                        </Button>
+                    </CardActions>
+                )
+                }
+
+
+
 
                 {/* 내용 */}
                 {isEditorMode ? (
-                    <Box sx={{ width: '100%', marginBottom: 4 }}>
-                        <TextField
-                            id="content_textfield"
-                            label="작성글"
-                            multiline
-                            rows={4}
-                            fullWidth
-                            value={currentContent}
-                            onChange={(e) => setCurrentContent(e.target.value)}
-                        />
-                    </Box>
+                    isCafe ? (
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                width: '100%',
+                                marginBottom: 4,
+                                whiteSpace: 'pre-wrap',
+                                textAlign: 'left',
+                                color: 'gray',
+                            }}
+                        >
+                            카페 글 작성에서는 내용을 수정할 수 없습니다.
+                        </Typography>
+                    ) : (
+                        <Box sx={{ width: '100%', marginBottom: 4 }}>
+                            <TextField
+                                id="content_textfield"
+                                label="작성글"
+                                multiline
+                                rows={4}
+                                fullWidth
+                                value={currentContent}
+                                onChange={(e) => setCurrentContent(e.target.value)}
+                            />
+                        </Box>
+                    )
                 ) : (
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            width: '100%',
-                            marginBottom: 4,
-                            whiteSpace: 'pre-wrap',
-                            textAlign: 'left',
-                        }}
-                    >
-                        {currentContent}
-                    </Typography>
+                    isCafe ? (
+                        <Box
+                            sx={{
+                                width: '100%',
+                                height: '200px',
+                                borderRadius: 3,
+                                overflow: 'hidden',
+                                marginBottom: 4,
+                            }}
+                        >
+                        카페고 에디터 모드아님.
+                        </Box>
+                    ) : (
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                width: '100%',
+                                marginBottom: 4,
+                                whiteSpace: 'pre-wrap',
+                                textAlign: 'left',
+                            }}
+                        >
+                            {currentContent}
+                        </Typography>
+                    )
                 )}
             </Card>
 

@@ -3,23 +3,10 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import {Cafe, CafeList} from "@/types";
 
-interface Cafe {
-    id: number;
-    name: string;
-    distance: string;
-    latitude: number;
-    longitude: number;
-    address: string;
-    kakaoLink: string;
-}
 
-interface CafeListProps {
-    cafes: Cafe[];
-    onCafeClick: (cafe: Cafe) => void;
-}
-
-const CafeItem = ({ cafe, onCafeClick }: { cafe: Cafe; onCafeClick: (cafe: Cafe) => void }) => {
+const CafeItem = ({ cafe, onCafeClick }: { listObject: CafeList; onCafeClick: (cafe: Cafe) => void }) => {
     return (
         <Box
             sx={{
@@ -72,7 +59,7 @@ const CafeItem = ({ cafe, onCafeClick }: { cafe: Cafe; onCafeClick: (cafe: Cafe)
     );
 };
 
-const CafeList = ({ cafes, onCafeClick }: CafeListProps) => {
+const CafeList = ({ cafes, onCafeClick }: Cafe) => {
     return (
         <Box
             sx={{
