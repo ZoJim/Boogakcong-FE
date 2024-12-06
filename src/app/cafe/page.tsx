@@ -75,11 +75,16 @@ const Page = () => {
 
                     {/* 스크롤 가능한 리스트 */}
                     <Box
+
                         sx={{
-                            height: '290px',
+                            height: '300px',
                             overflowX: 'hidden',
                             borderRadius: '8px',
                             padding: '8px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            // justifyContent: 'center',
                         }}
                     >
                         <CafeList
