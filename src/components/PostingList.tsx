@@ -26,7 +26,7 @@ const PostingList = ({ title, content, createdAt, imageUrl }: PostingListProps) 
         <Card
             sx={{
                 borderRadius: 4,
-                width: 360,
+                width: 350,
                 height: 180,
                 padding: 2,
                 boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",

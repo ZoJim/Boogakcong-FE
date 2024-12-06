@@ -206,7 +206,7 @@ const CafeViewer = (
                 </Box>
             </Box>
             <Box sx={{width: '100%', marginTop: 3}}>
-                {!isLoggedIn ? (
+                {isLoggedIn ? (
                     <Box
                         sx={{
                             display: 'flex',

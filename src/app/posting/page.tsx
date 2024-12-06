@@ -1,17 +1,18 @@
 'use client';
 
-import React, {useState} from 'react';
-import {Backdrop, Box, CardMedia, Typography} from '@mui/material';
+import React, { useState } from 'react';
+import { Backdrop, Box, CardMedia, Chip, Typography } from '@mui/material';
 import PostingList from "@/components/PostingList";
 import NavigationBar from "@/components/Navigation";
-import {blue} from "@mui/material/colors";
-import {Posting, PostType} from "@/types";
+import { blue } from "@mui/material/colors";
+import { Posting, PostType } from "@/types";
 import postings from "@/mocks/postings";
 import PostingViewer from "@/components/PostViewer";
 
 const Page = () => {
     const [selectedPosting, setSelectedPosting] = useState<Posting | null>(null); // 선택된 게시글 상태
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+    const [selectedFilter, setSelectedFilter] = useState<PostType | null>(null); // 필터 상태 (RECRUITMENT, REVIEW)
 
     const handlePostingClick = (postId: number) => {
         // FIXME: 아래 코드는 임시로 작성한 코드입니다
@@ -34,6 +35,11 @@ const Page = () => {
         setSelectedPosting(null);
         setIsModalOpen(false);
     };
+
+    // 필터된 게시글 목록
+    const filteredPostings = selectedFilter
+        ? postings.filter(posting => posting.postType === selectedFilter)
+        : postings;
 
     return (
         <Box
@@ -105,6 +111,21 @@ const Page = () => {
                         <Typography variant="h3" sx={{ fontWeight: 'bold', color: "#ffffff" }}>
                             목록
                         </Typography>
+                        <Box sx={{ marginLeft: 'auto' }}>
+                            {/* 필터 Chip 추가 */}
+                            <Chip
+                                label="모집글"
+                                color={selectedFilter === PostType.RECRUITMENT ? 'primary' : 'default'}
+                                onClick={() => setSelectedFilter(PostType.RECRUITMENT)}
+                                sx={{ marginRight: 1, backgroundColor: selectedFilter === PostType.RECRUITMENT ? "#90caf9" : undefined }}
+                            />
+                            <Chip
+                                label="후기글"
+                                color={selectedFilter === PostType.REVIEW ? 'primary' : 'default'}
+                                onClick={() => setSelectedFilter(PostType.REVIEW)}
+                                sx={{ backgroundColor: selectedFilter === PostType.REVIEW ? "#90caf9" : undefined }}
+                            />
+                        </Box>
                     </Box>
                     <Box
                         sx={{
@@ -115,7 +136,7 @@ const Page = () => {
                             overflowY: 'auto',
                         }}
                     >
-                        {postings.map((posting, index) => (
+                        {filteredPostings.map((posting, index) => (
                             <Box
                                 key={index}
                                 onClick={() => handlePostingClick(posting.id)}
