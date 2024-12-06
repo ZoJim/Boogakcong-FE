@@ -1,34 +1,37 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 declare global {
     interface Window {
-        kakao: any; // 카카오 객체를 전역 변수로 선언
+        kakao: any;
     }
 }
 
 interface KakaoMapProps {
-    initialLat: number; // 초기 위도
-    initialLon: number; // 초기 경도
-    level: number; // 지도 확대 수준
-    mapId: string; // 고유한 지도 ID
+    initialLat: number;
+    initialLon: number;
+    level: number;
+    mapId: string;
+    latitude?: number;
+    longitude?: number;
 }
 
-const KakaoMap = ({ initialLat, initialLon, level, mapId }: KakaoMapProps) => {
+const KakaoMap = ({ initialLat, initialLon, level, mapId, latitude, longitude }: KakaoMapProps) => {
+    const mapRef = useRef<null | any>(null); // 지도 객체를 저장할 ref
+
     useEffect(() => {
         const initializeMap = () => {
-            const container = document.getElementById(mapId); // 고유한 ID로 컨테이너 찾기
-            if (!container) {
-                // console.error('Map container not found');
-                return;
-            }
+            const container = document.getElementById(mapId);
+            if (!container) return;
 
             const options = {
-                center: new window.kakao.maps.LatLng(initialLat, initialLon), // 지도 중심 좌표
-                level, // 확대 수준
+                center: new window.kakao.maps.LatLng(initialLat, initialLon),
+                level,
             };
-            new window.kakao.maps.Map(container, options); // 지도 생성
+
+            // 지도 생성 후 ref에 저장
+            mapRef.current = new window.kakao.maps.Map(container, options);
         };
 
         const loadKakaoMap = () => {
@@ -42,9 +45,7 @@ const KakaoMap = ({ initialLat, initialLon, level, mapId }: KakaoMapProps) => {
             script.async = true;
             script.onload = () => {
                 if (window.kakao && window.kakao.maps && window.kakao.maps.load) {
-                    window.kakao.maps.load(() => {
-                        initializeMap();
-                    });
+                    window.kakao.maps.load(() => initializeMap());
                 } else {
                     console.error('Kakao maps load function is not available');
                 }
@@ -59,12 +60,20 @@ const KakaoMap = ({ initialLat, initialLon, level, mapId }: KakaoMapProps) => {
         loadKakaoMap();
     }, [initialLat, initialLon, level, mapId]);
 
+    useEffect(() => {
+        // 좌표가 변경되면 지도 중심 이동
+        if (latitude && longitude && mapRef.current) {
+            const moveLatLon = new window.kakao.maps.LatLng(latitude, longitude);
+            mapRef.current.setCenter(moveLatLon);
+        }
+    }, [latitude, longitude]);
+
     return (
         <div
-            id={mapId} // 고유한 ID 사용
+            id={mapId}
             style={{
                 width: '100%',
-                height: '100%', // 부모 컨테이너에 맞게 조정
+                height: '100%',
             }}
         />
     );

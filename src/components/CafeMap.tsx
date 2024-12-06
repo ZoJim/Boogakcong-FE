@@ -1,17 +1,19 @@
 'use client';
 
 import React from 'react';
-import KakaoMap from './KakaoMap'; // KakaoMap 컴포넌트를 import
+import KakaoMap from './KakaoMap';
 import { Box, Typography, Button } from '@mui/material';
-import {blue} from "@mui/material/colors";
-import { grey } from '@mui/material/colors';
+import { blue, grey } from '@mui/material/colors';
+
 interface CafeMapProps {
-    name: string; // 카페 이름
-    address: string; // 주소
-    kakaoLink: string; // 카카오맵 링크
+    name: string;
+    address: string;
+    kakaoLink: string;
+    latitude: number;
+    longitude: number;
 }
 
-const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
+const CafeMap = ({ name, address, kakaoLink, latitude, longitude }: CafeMapProps) => {
     return (
         <Box
             sx={{
@@ -19,7 +21,7 @@ const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
                 height: '300px',
                 borderRadius: '20px',
                 overflow: 'hidden',
-                boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",
+                boxShadow: 'inset 0px 4px 6px rgba(0, 0, 0, 0.2)',
                 backgroundColor: '#ffffff',
                 display: 'flex',
                 flexDirection: 'column',
@@ -29,41 +31,48 @@ const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
             <Box
                 sx={{
                     width: '100%',
-                    height: '200px', // 지도 영역의 높이를 200px로 제한
+                    height: '200px',
                 }}
             >
-                <KakaoMap initialLat={35.2321} initialLon={129.0846} level={3} mapId="cafeMap1" />
+                <KakaoMap
+                    initialLat={35.2321}
+                    initialLon={129.0846}
+                    level={3}
+                    mapId="cafeMap1"
+                    latitude={latitude}
+                    longitude={longitude}
+                />
             </Box>
 
-            {/* 흰색 하단 영역 */}
+            {/* 하단 정보 영역 */}
             <Box
                 sx={{
                     width: '100%',
-                    height: '100px', // 하단 영역의 높이를 100px로 고정
+                    height: '100px',
                     backgroundColor: '#ffffff',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'flex-start', // 왼쪽 정렬
+                    alignItems: 'flex-start',
                     justifyContent: 'center',
-                    padding: '16px', // 패딩 추가
+                    padding: '16px',
                 }}
             >
                 <Typography
-                    variant="h2"
+                    variant="h6"
                     sx={{
                         fontWeight: 'bold',
-                        textAlign: 'left', // 텍스트 왼쪽 정렬
+                        textAlign: 'left',
                     }}
                 >
                     {name}
                 </Typography>
                 <Typography
-                    variant="body1"
+                    variant="body2"
                     sx={{
                         color: grey[500],
                         fontSize: '12px',
                         marginBottom: '5px',
-                        textAlign: 'left', // 텍스트 왼쪽 정렬
+                        textAlign: 'left',
                     }}
                 >
                     {address}
@@ -71,7 +80,7 @@ const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
                 <Button
                     variant="contained"
                     sx={{
-                        alignSelf: 'flex-start', // 버튼을 왼쪽 정렬
+                        alignSelf: 'flex-start',
                         backgroundColor: blue[200],
                         color: '#ffffff',
                         fontSize: '12px',
@@ -81,7 +90,7 @@ const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
                             backgroundColor: blue[400],
                         },
                     }}
-                    onClick={() => window.open(kakaoLink, '_blank')} // 카카오맵 링크로 이동
+                    onClick={() => window.open(kakaoLink, '_blank')}
                 >
                     카카오 장소보기
                 </Button>

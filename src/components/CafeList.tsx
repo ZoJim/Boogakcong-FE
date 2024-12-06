@@ -2,19 +2,24 @@
 
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import {blue, grey} from "@mui/material/colors";
+import { grey } from '@mui/material/colors';
 
 interface Cafe {
     id: number;
     name: string;
-    distance: string; // 거리 정보
+    distance: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    kakaoLink: string;
 }
 
-interface CafeItemProps {
-    cafe: Cafe;
+interface CafeListProps {
+    cafes: Cafe[];
+    onCafeClick: (cafe: Cafe) => void;
 }
 
-const CafeItem = ({ cafe }: CafeItemProps) => {
+const CafeItem = ({ cafe, onCafeClick }: { cafe: Cafe; onCafeClick: (cafe: Cafe) => void }) => {
     return (
         <Box
             sx={{
@@ -25,12 +30,16 @@ const CafeItem = ({ cafe }: CafeItemProps) => {
                 borderRadius: '8px',
                 boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",
                 backgroundColor: '#ffffff',
-                width: "340px",
-                height: "50px",
+                width: '100%',
+                height: '50px',
                 margin: '8px auto',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                    backgroundColor: grey[200],
+                },
             }}
+            onClick={() => onCafeClick(cafe)}
         >
             <Typography
                 variant="h4"
@@ -44,8 +53,8 @@ const CafeItem = ({ cafe }: CafeItemProps) => {
 
             <Typography
                 variant="body2"
-                sx ={{
-                    color: grey[800]
+                sx={{
+                    color: grey[800],
                 }}
             >
                 정문에서 도보{' '}
@@ -63,11 +72,7 @@ const CafeItem = ({ cafe }: CafeItemProps) => {
     );
 };
 
-interface CafeListProps {
-    cafes: Cafe[];
-}
-
-const CafeList = ({ cafes }: CafeListProps) => {
+const CafeList = ({ cafes, onCafeClick }: CafeListProps) => {
     return (
         <Box
             sx={{
@@ -79,7 +84,7 @@ const CafeList = ({ cafes }: CafeListProps) => {
             }}
         >
             {cafes.map((cafe) => (
-                <CafeItem key={cafe.id} cafe={cafe} />
+                <CafeItem key={cafe.id} cafe={cafe} onCafeClick={onCafeClick} />
             ))}
         </Box>
     );

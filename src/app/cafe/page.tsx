@@ -6,7 +6,7 @@ import { blue } from '@mui/material/colors';
 import Navigation from '@/components/Navigation';
 import CafeMap from '@/components/CafeMap';
 import CafeList from '@/components/CafeList';
-import React from 'react';
+import React, { useState } from 'react';
 
 const float = keyframes`
     0% {
@@ -21,6 +21,24 @@ const float = keyframes`
 `;
 
 const Page = () => {
+    const [selectedCafe, setSelectedCafe] = useState({
+        name: '레드버튼 부산대점',
+        address: '부산 금정구 금정로 75',
+        kakaoLink: 'http://place.map.kakao.com/445393846',
+        latitude: 35.2314175247574,
+        longitude: 129.086345000906,
+    });
+
+    const handleCafeClick = (cafe: {
+        name: string;
+        address: string;
+        kakaoLink: string;
+        latitude: number;
+        longitude: number;
+    }) => {
+        setSelectedCafe(cafe);
+    };
+
     return (
         <Box
             sx={{
@@ -56,7 +74,13 @@ const Page = () => {
                             지도
                         </Typography>
                     </Box>
-                    <CafeMap name={'카페 1'} address={'주소 1'} kakaoLink={'http://place.map/1'} />
+                    <CafeMap
+                        name={selectedCafe.name}
+                        address={selectedCafe.address}
+                        kakaoLink={selectedCafe.kakaoLink}
+                        latitude={selectedCafe.latitude}
+                        longitude={selectedCafe.longitude}
+                    />
                 </Box>
 
                 {/* 카페 목록 섹션 */}
@@ -75,26 +99,36 @@ const Page = () => {
 
                     {/* 스크롤 가능한 리스트 */}
                     <Box
-
                         sx={{
                             height: '300px',
                             overflowX: 'hidden',
+                            overflowY: 'auto',
                             borderRadius: '8px',
                             padding: '8px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            // justifyContent: 'center',
                         }}
                     >
                         <CafeList
                             cafes={[
-                                { id: 1, name: '레드버튼 부산대점', distance: '3' },
-                                { id: 2, name: '보노베리', distance: '5' },
-                                { id: 3, name: '부산커피', distance: '7' },
-                                { id: 4, name: '카페테제', distance: '4' },
-                                { id: 5, name: '서빙고 본점', distance: '6' },
+                                {
+                                    id: 1,
+                                    name: '레드버튼 부산대점',
+                                    distance: '3',
+                                    latitude: 35.2314175247574,
+                                    longitude: 129.086345000906,
+                                    address: '부산 금정구 금정로 75',
+                                    kakaoLink: 'http://place.map.kakao.com/445393846',
+                                },
+                                {
+                                    id: 2,
+                                    name: '보노베리',
+                                    distance: '5',
+                                    latitude: 35.23152,
+                                    longitude: 129.08512,
+                                    address: '부산 금정구 장전온천천로 67-1',
+                                    kakaoLink: 'http://place.map.kakao.com/54054644',
+                                },
                             ]}
+                            onCafeClick={handleCafeClick}
                         />
                     </Box>
                 </Box>
