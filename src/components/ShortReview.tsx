@@ -1,13 +1,15 @@
 import React from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
 
+
 interface ShortReviewProps {
-  cafeName: string;
-  content: string;
-  createdAt: string;
+    cafeId: number;
+    cafeName: string;
+    content: string;
+    createdAt: string;
 }
 
-const ShortReview: React.FC<ShortReviewProps> = ({ cafeName, content, createdAt }) => {
+const ShortReview = ({ cafeId, cafeName, content, createdAt }) => {
   return (
     <Card
       sx={{

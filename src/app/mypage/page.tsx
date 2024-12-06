@@ -7,10 +7,11 @@ import Navigation from '@/components/Navigation';
 import PostingList from '@/components/PostingList';
 import ShortReview from '@/components/ShortReview';
 import UserInfo from '@/components/UserInfo';
-import { getUser } from '@/app/api/user';
+import { getUser } from '@/app/api/user'; // getMyReview 추가
+import { getMyReview } from '@/app/api/review';
 import { useAtomValue } from 'jotai';
 import { accessTokenAtom } from '@/state/authAtom';
-import {UserRole} from "@/types";
+import { UserRole } from '@/types';
 
 const Page = () => {
     const token = useAtomValue(accessTokenAtom); // Access Token 가져오기
@@ -19,8 +20,12 @@ const Page = () => {
         role: UserRole;
         email: string;
     } | null>(null);
+    const [reviews, setReviews] = useState<
+        { id: number; cafeName: string; content: string; createdAt: string }[]
+    >([]);
     const [error, setError] = useState<string | null>(null); // 에러 상태 관리
 
+    // Fetch user info
     useEffect(() => {
         const fetchUserInfo = async () => {
             if (!token) {
@@ -43,6 +48,29 @@ const Page = () => {
         };
 
         fetchUserInfo();
+    }, [token]);
+
+    // Fetch reviews written by the user
+    useEffect(() => {
+        const fetchMyReviews = async () => {
+            if (!token) return;
+
+            try {
+                const response = await getMyReview(token);
+                setReviews(
+                    response.map((review: any) => ({
+                        id: review.id,
+                        cafeName: review.cafeName,
+                        content: review.content,
+                        createdAt: review.createdAt,
+                    }))
+                );
+            } catch (err: any) {
+                console.error('Error fetching my reviews:', err);
+            }
+        };
+
+        fetchMyReviews();
     }, [token]);
 
     const handleEditCafe = () => {
@@ -88,7 +116,7 @@ const Page = () => {
                     </Box>
                     <UserInfo
                         name={userInfo.name}
-                        role={UserRole[userInfo.role] } // 열거형을 활용해 한글값 가져오기
+                        role={UserRole[userInfo.role]}
                         email={userInfo.email}
                         onEditCafe={handleEditCafe}
                         onDeleteCafe={handleDeleteCafe}
@@ -110,17 +138,20 @@ const Page = () => {
                     </Typography>
                 </Box>
 
-                {/* ShortReview 컴포넌트 */}
-                <ShortReview
-                    cafeName="정지민카페"
-                    content="공부하기 꽤 괜찮네요."
-                    createdAt="2024-12-06T00:19:53.602633"
-                />
-                <ShortReview
-                    cafeName="유일무이카페"
-                    content="커피가 정말 맛있어요!"
-                    createdAt="2024-12-05T13:42:15.602633"
-                />
+                {reviews.length > 0 ? (
+                    reviews.map((review) => (
+                        <ShortReview
+                            key={review.id}
+                            cafeName={review.cafeName}
+                            content={review.content}
+                            createdAt={review.createdAt}
+                        />
+                    ))
+                ) : (
+                    <Typography sx={{ color: '#ffffff', mt: 2 }}>
+                        아직 작성한 리뷰가 없습니다.
+                    </Typography>
+                )}
             </Box>
 
             {/* 내가 쓴 게시글 */}
