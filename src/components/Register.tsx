@@ -95,7 +95,7 @@ const Register = ({ onNavigate }: RegisterProps) => {
         <Button
           variant="contained"
           fullWidth
-          onClick={() => onNavigate("login")} // 페이지 전환
+          onClick={() => onNavigate("/login")} // 페이지 전환
           sx={{
             bgcolor: blue[500],
             color: "white",
