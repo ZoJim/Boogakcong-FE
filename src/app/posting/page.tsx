@@ -7,7 +7,7 @@ import NavigationBar from "@/components/Navigation";
 import { blue } from "@mui/material/colors";
 import { Posting, PostType } from "@/types";
 import PostingViewer from "@/components/PostViewer";
-import { getPostAll } from "@/app/api/post";
+import {getPostAll, getTopPost} from "@/app/api/post";
 
 const Page = () => {
     const [selectedPosting, setSelectedPosting] = useState<Posting | null>(null); // 선택된 게시글 상태
@@ -15,29 +15,35 @@ const Page = () => {
     const [selectedFilter, setSelectedFilter] = useState<PostType | null>(null); // 필터 상태 (RECRUITMENT, REVIEW)
     const [postings, setPostings] = useState<Posting[]>([]); // 전체 게시글 상태
     const [filteredPostings, setFilteredPostings] = useState<Posting[]>([]); // 필터링된 게시글 상태
+    const [topPosting, setTopPosting] = useState<Posting | null>(null); // 인기 글 상태
 
     // 서버에서 게시글 목록을 가져오는 함수
     useEffect(() => {
         const fetchPostings = async () => {
             try {
                 const res = await getPostAll();
-                console.log("API Response:", res);
-
-                // res가 배열인지 확인
                 if (Array.isArray(res)) {
-                    console.log("Fetched postings:", res);
                     setPostings(res);
                     setFilteredPostings(res);
                 } else {
-                    console.error("Unexpected API response:", res);
                     throw new Error("Invalid response format");
                 }
             } catch (error) {
-                console.error("Error in fetchPostings:", error);
+                console.error("Error fetching postings:", error);
+            }
+        };
+
+        const fetchTopPost = async () => {
+            try {
+                const topPost = await getTopPost();
+                setTopPosting(topPost);
+            } catch (error) {
+                console.error("Error fetching top post:", error);
             }
         };
 
         fetchPostings();
+        fetchTopPost();
     }, []);
 
     // 필터가 변경될 때마다 필터링된 게시글 목록 업데이트
@@ -104,13 +110,12 @@ const Page = () => {
                             인기 글
                         </Typography>
                     </Box>
-                    <Box onClick={() => handlePostingClick(0)}>
+                    <Box onClick={() => handlePostingClick(4)}>
                         <PostingList
-                            // FIXME
-                            // title={postings[0].title}
-                            // content={postings[0].content}
-                            // createdAt={postings[0].createdAt}
-                            // imageUrl={postings[0].imageUrl}
+                            title = {topPosting?.title as string}
+                            content = {topPosting?.content as string}
+                            createdAt = {topPosting?.createdAt as string}
+                            imageUrl = {topPosting?.imageUrl as string}
                         />
                     </Box>
                 </Box>
