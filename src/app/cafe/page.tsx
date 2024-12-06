@@ -127,6 +127,33 @@ const Page = () => {
                                     address: '부산 금정구 장전온천천로 67-1',
                                     kakaoLink: 'http://place.map.kakao.com/54054644',
                                 },
+                                {
+                                    id: 3,
+                                    name: '카페 노티드',
+                                    distance: '7',
+                                    latitude: 35.23152,
+                                    longitude: 129.08512,
+                                    address: '부산 금정구 장전온천천로 67-1',
+                                    kakaoLink: 'http://place.map.kakao.com/540'
+                                },
+                                {
+                                    id: 4,
+                                    name: '카페 노티드',
+                                    distance: '7',
+                                    latitude: 35.23152,
+                                    longitude: 129.08512,
+                                    address: '부산 금정구 장전온천천로 67-1',
+                                    kakaoLink: 'http://place.map.kakao.com/540'
+                                },{
+                                    id: 5,
+                                    name: '카페 노티드',
+                                    distance: '7',
+                                    latitude: 35.23152,
+                                    longitude: 129.08512,
+                                    address: '부산 금정구 장전온천천로 67-1',
+                                    kakaoLink: 'http://place.map.kakao.com/540'
+                                }
+
                             ]}
                             onCafeClick={handleCafeClick}
                         />

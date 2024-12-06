@@ -6,11 +6,11 @@ import { Box, Typography, Button } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 
 interface CafeMapProps {
-    name: string;
-    address: string;
-    kakaoLink: string;
-    latitude: number;
-    longitude: number;
+    name: string; // 카페 이름
+    address: string; // 주소
+    kakaoLink: string; // 카카오맵 링크
+    latitude: number; // 카페 위도
+    longitude: number; // 카페 경도
 }
 
 const CafeMap = ({ name, address, kakaoLink, latitude, longitude }: CafeMapProps) => {
@@ -41,6 +41,7 @@ const CafeMap = ({ name, address, kakaoLink, latitude, longitude }: CafeMapProps
                     mapId="cafeMap1"
                     latitude={latitude}
                     longitude={longitude}
+                    markerImage="/images/sanjinee.png" // 마커 이미지 경로
                 />
             </Box>
 
@@ -92,7 +93,7 @@ const CafeMap = ({ name, address, kakaoLink, latitude, longitude }: CafeMapProps
                     }}
                     onClick={() => window.open(kakaoLink, '_blank')}
                 >
-                    카카오 장소보기
+                    장소보기
                 </Button>
             </Box>
         </Box>
