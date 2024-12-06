@@ -72,7 +72,7 @@ const CafeMap = ({ name, address, kakaoLink }: CafeMapProps) => {
                     variant="contained"
                     sx={{
                         alignSelf: 'flex-start', // 버튼을 왼쪽 정렬
-                        backgroundColor: blue[300],
+                        backgroundColor: blue[200],
                         color: '#ffffff',
                         fontSize: '12px',
                         padding: '8px 16px',
