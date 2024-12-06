@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useAtomValue } from 'jotai';
 
-import { userAtom, userProfileAtom } from '@/state/atom';
+import { userAtom, userProfileAtom } from '@/state/authAtom';
 
 export const useGetUser = () => {
   const user = useAtomValue(userAtom);

@@ -1,3 +1,5 @@
 import { springApiRequest } from './api';
 
-export const login = (email: string, password: string) => springApiRequest('POST', '/api/login', null, { email, password });
+export const login = (email: string, password: string) =>  springApiRequest('POST', '/api/member/auth/login', null, { email, password });
+
+export const signup = (email: string, password: string, name: string) => springApiRequest('POST', '/api/member/auth/signup', null, { email, password, name });

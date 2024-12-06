@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState } from "react";
+import React from "react";
 import Register from "@/components/Register";
-import UserInfo from "@/components/UserInfo";
-import { Box } from '@mui/material';
-import { blue } from '@mui/material/colors';
+import {Box} from '@mui/material';
+import {blue} from '@mui/material/colors';
 
 const Page = () => {
   const handleNavigate = (page: string) => {

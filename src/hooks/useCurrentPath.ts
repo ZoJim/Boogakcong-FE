@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useSetAtom } from 'jotai';
 
-import { loginBackPathAtom } from '@/state/atom';
+import { loginBackPathAtom } from '@/state/authAtom';
 
 const useCurrentPath = () => {
   const setCurrentPath = useSetAtom(loginBackPathAtom);

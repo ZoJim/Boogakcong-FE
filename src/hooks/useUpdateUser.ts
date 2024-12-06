@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 
 import { getUser } from '@/app/api/user';
-import { userProfileAtom } from '@/state/atom';
+import { userProfileAtom } from '@/state/authAtom';
 
 import { useGetUser } from './useGetUser';
 
