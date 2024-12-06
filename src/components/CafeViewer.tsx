@@ -236,7 +236,7 @@ const CafeViewer = (
                                 },
                             }}
                         >
-                            댓글 추가
+                            리뷰 등록
                         </Button>
                     </Box>
                 ) : (
@@ -248,7 +248,7 @@ const CafeViewer = (
                             mb: 2,
                         }}
                     >
-                        로그인을 해야 댓글을 작성할 수 있어요 :)
+                        로그인을 해야 리뷰를 작성할 수 있어요 :)
                     </Typography>
                 )}
             </Box>
