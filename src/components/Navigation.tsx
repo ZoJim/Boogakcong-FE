@@ -54,6 +54,7 @@ const NavigationBar = () => {
                             width: 40,
                             height: 40,
                             mb: 1,
+                            ml: 3
                         }}
                     />
                     <Typography
@@ -62,6 +63,7 @@ const NavigationBar = () => {
                             fontSize: '14px',
                             color: 'inherit',
                             textDecoration: 'none',
+                            ml: 3
                         }}
                     >
                         {item.label}
