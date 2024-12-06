@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 declare global {
     interface Window {
-        kakao: any; // 카카오 객체를 전역 변수로 선언
+        kakao: any;
     }
 }
 
@@ -13,22 +13,44 @@ interface KakaoMapProps {
     initialLon: number; // 초기 경도
     level: number; // 지도 확대 수준
     mapId: string; // 고유한 지도 ID
+    latitude?: number; // 이동할 위도
+    longitude?: number; // 이동할 경도
+    markerImage?: string; // 마커 이미지 경로
 }
 
-const KakaoMap = ({ initialLat, initialLon, level, mapId }: KakaoMapProps) => {
+const KakaoMap = ({ initialLat, initialLon, level, mapId, latitude, longitude, markerImage }: KakaoMapProps) => {
+    const mapRef = useRef<null | any>(null); // 지도 객체를 저장할 ref
+    const markerRef = useRef<null | any>(null); // 마커 객체를 저장할 ref
+
     useEffect(() => {
         const initializeMap = () => {
-            const container = document.getElementById(mapId); // 고유한 ID로 컨테이너 찾기
-            if (!container) {
-                // console.error('Map container not found');
-                return;
-            }
+            const container = document.getElementById(mapId);
+            if (!container) return;
 
             const options = {
-                center: new window.kakao.maps.LatLng(initialLat, initialLon), // 지도 중심 좌표
-                level, // 확대 수준
+                center: new window.kakao.maps.LatLng(initialLat, initialLon),
+                level,
             };
-            new window.kakao.maps.Map(container, options); // 지도 생성
+
+            // 지도 생성 후 ref에 저장
+            mapRef.current = new window.kakao.maps.Map(container, options);
+
+            // 마커 생성
+            const markerPosition = new window.kakao.maps.LatLng(initialLat, initialLon);
+            const markerOptions: any = {
+                position: markerPosition,
+            };
+
+            // 마커에 이미지 추가
+            if (markerImage) {
+                const imageSize = new window.kakao.maps.Size(40, 40); // 마커 이미지 크기
+                const markerIcon = new window.kakao.maps.MarkerImage(markerImage, imageSize);
+                markerOptions.image = markerIcon;
+            }
+
+            // 마커 생성 후 ref에 저장
+            markerRef.current = new window.kakao.maps.Marker(markerOptions);
+            markerRef.current.setMap(mapRef.current);
         };
 
         const loadKakaoMap = () => {
@@ -57,14 +79,23 @@ const KakaoMap = ({ initialLat, initialLon, level, mapId }: KakaoMapProps) => {
         };
 
         loadKakaoMap();
-    }, [initialLat, initialLon, level, mapId]);
+    }, [initialLat, initialLon, level, mapId, markerImage]);
+
+    useEffect(() => {
+        // 지도와 마커 위치 업데이트
+        if (latitude && longitude && mapRef.current && markerRef.current) {
+            const newPosition = new window.kakao.maps.LatLng(latitude, longitude);
+            mapRef.current.setCenter(newPosition); // 지도 중심 이동
+            markerRef.current.setPosition(newPosition); // 마커 위치 이동
+        }
+    }, [latitude, longitude]);
 
     return (
         <div
-            id={mapId} // 고유한 ID 사용
+            id={mapId}
             style={{
                 width: '100%',
-                height: '100%', // 부모 컨테이너에 맞게 조정
+                height: '100%',
             }}
         />
     );
