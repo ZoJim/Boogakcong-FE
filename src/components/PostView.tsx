@@ -126,6 +126,7 @@ const PostView: React.FC<PostViewProps> = ({ title, content, image }) => {
                     //onClick={handleSubmit} // 완료 버튼 클릭 시 handleSubmit 호출
                     sx={{
                         borderRadius: '10px',
+                        color: '#FFFFFF',
                         paddingX: 4,
                         paddingY: 1,
                         backgroundColor: '#2196F3',

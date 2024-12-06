@@ -126,6 +126,51 @@ const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl }: Po
                     />
                 )}
 
+                        {/* 모집글, 후기글 버튼 */}
+                        <CardActions
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'flex-end', // 우측 정렬
+                        gap: 0.4,
+                        width: '100%',
+                        marginBottom: 1,
+                    }}
+                >
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                            borderRadius: '20px',
+                            paddingX: 1,
+                            paddingY: 0.7,
+                            borderColor: '#2196F3', // 외곽선 색상
+                            color: '#2196F3', // 텍스트 색상
+                            '&:hover': {
+                                backgroundColor: '#BBDEFB', // hover 효과, #BBDEFB = BLUE/100
+                                borderColor: '#2196F3', // #2196F3 = BLUE/500
+                            },
+                        }}
+                    >
+                        모집글
+                    </Button>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        sx={{
+                            borderRadius: '20px',
+                            paddingX: 1,
+                            paddingY: 0.7,
+                            backgroundColor: '#2196F3', // 버튼 배경색
+                            color: '#FFFFFF', // 텍스트 색상
+                            '&:hover': {
+                                backgroundColor: '#1976D2', // hover 효과
+                            },
+                        }}
+                    >
+                        후기글
+                    </Button>
+                </CardActions> 
+
                 {/* 내용 */}
                 {isEditorMode ? (
                     <Box sx={{ width: '100%', marginBottom: 4 }}>
@@ -171,6 +216,7 @@ const Posting = ({ onSubmit, isEditorMode = true, title, content, imageUrl }: Po
                             borderRadius: '10px',
                             paddingX: 4,
                             paddingY: 1,
+                            color: '#FFFFFF',
                             backgroundColor: '#2196F3',
                             '&:hover': {
                                 backgroundColor: '#1976D2',
