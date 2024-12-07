@@ -4,10 +4,17 @@ import { Box, Typography } from '@mui/material';
 interface DeleteInfoProps {
   cafeID: number;
   cafeName: string;
-  reason: string;
+  deleteReason: string;
 }
 
-const DeleteInfo: React.FC<DeleteInfoProps> = ({ cafeID, cafeName, reason }) => {
+enum DeleteReason {
+    CAFE_CLOSED = "더이상 운영하지 않음",
+    CAFE_UNMAINTAINABLE = "유지보수 어려움",
+    ETC = "기타"
+}
+
+const DeleteInfo: React.FC<DeleteInfoProps> = ({ cafeID, cafeName, deleteReason }) => {
+    console.log(deleteReason);
   return (
     <Box
       sx={{
@@ -26,7 +33,7 @@ const DeleteInfo: React.FC<DeleteInfoProps> = ({ cafeID, cafeName, reason }) => 
         {cafeName}
       </Typography>
       <Typography variant="body2">
-        {reason}
+        {DeleteReason[deleteReason as keyof typeof DeleteReason]}
       </Typography>
     </Box>
   );

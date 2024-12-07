@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     Typography,
@@ -12,16 +12,17 @@ import {
     DialogContent,
     DialogTitle
 } from '@mui/material';
-import { blue, grey } from '@mui/material/colors';
+import {blue, grey} from '@mui/material/colors';
 import UserInfo from '@/components/UserInfo';
-import { deleteUser, getUserList } from "@/app/api/user"; // Import deleteUser API
-import { toast } from 'react-toastify';
+import {deleteUser, getUserList} from "@/app/api/user"; // Import deleteUser API
+import {toast} from 'react-toastify';
 import CafeRegister from "@/components/CafeRegister";
 import DeleteInfo from "@/components/DeleteInfo";
 import ShortReview from "@/components/ShortReview";
 import PostingList from "@/components/PostingList";
-import { getReviewList } from "@/app/api/review"; // Import getReviewList API
-import { getPostAll } from "@/app/api/post"; // Import getPostAll API
+import {getReviewList} from "@/app/api/review"; // Import getReviewList API
+import {getPostAll} from "@/app/api/post";
+import {getCafeDeleteRequest} from "@/app/api/cafe"; // Import getPostAll API
 
 const Page = () => {
     const token = localStorage.getItem('accessToken') || null;
@@ -31,6 +32,8 @@ const Page = () => {
     const [reviewLoading, setReviewLoading] = useState(false);
     const [postList, setPostList] = useState<any[]>([]);
     const [postLoading, setPostLoading] = useState(false); // Changed to boolean for loading state
+    const [deleteRequest, setDeleteRequest] = useState<any[]>([]); // State for delete request
+    const [deleteRequestLoading, setDeleteRequestLoading] = useState(false); // State for delete request loading
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState(''); // State to store search query
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State to handle delete dialog visibility
@@ -83,10 +86,27 @@ const Page = () => {
         }
     };
 
+// Fetch delete request list
+    const fetchDeleteRequestList = async () => {
+        if (!token) return;
+        setDeleteRequestLoading(true);
+        try {
+            const deleteRequests = await getCafeDeleteRequest(token); // Get delete requests from the API
+            console.log(deleteRequests); // Check the data you're getting from the API
+            setDeleteRequest(deleteRequests); // Set the actual delete request data
+        } catch (error) {
+            console.error('카페 삭제 요청 목록을 불러오는 데 실패했습니다:', error);
+            toast.error('카페 삭제 요청 목록을 불러오는 데 실패했습니다.');
+        } finally {
+            setDeleteRequestLoading(false); // Reset the loading state after the request is complete
+        }
+    };
+
     useEffect(() => {
         fetchUserList();
-        fetchReviewList(); // Fetch reviews when the component mounts
-        fetchPostList(); // Fetch posts when the component mounts
+        fetchReviewList();
+        fetchPostList();
+        fetchDeleteRequestList();
     }, [token]);
 
     const handleApprove = (requestId: string) => {
@@ -94,12 +114,10 @@ const Page = () => {
         alert(`${requestId} 등록 요청이 승인되었습니다.`);
     };
 
-    // Handle search functionality
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
         setSearchQuery(query);
 
-        // Filter userList based on the search query (both id and name)
         const filtered = userList.filter(user =>
             user.name.toLowerCase().includes(query.toLowerCase()) || // Filter by name
             user.id.toString().includes(query) // Filter by user id (convert to string for partial match)
@@ -107,19 +125,16 @@ const Page = () => {
         setFilteredUserList(filtered); // Update the filtered list only
     };
 
-    // Open delete dialog
     const handleOpenDeleteDialog = (userId: number) => {
         setUserIdToDelete(userId);
         setOpenDeleteDialog(true); // Open the delete confirmation dialog
     };
 
-    // Close delete dialog
     const handleCloseDeleteDialog = () => {
         setOpenDeleteDialog(false); // Close the delete confirmation dialog
         setUserIdToDelete(null);
     };
 
-    // Handle delete user
     const handleDelete = async () => {
         if (!token || userIdToDelete === null) return;
 
@@ -161,11 +176,11 @@ const Page = () => {
             </Typography>
 
             {/* 컨텐츠 섹션 */}
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="h3" sx={{ fontSize: 24, fontWeight: 'bold', mb: 1, color: 'white' }}>
+            <Box sx={{mb: 3}}>
+                <Typography variant="h3" sx={{fontSize: 24, fontWeight: 'bold', mb: 1, color: 'white'}}>
                     회원 관리
                 </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
                     {/* 검색창 */}
                     <TextField
                         placeholder="회원 검색"
@@ -188,16 +203,16 @@ const Page = () => {
                             bgcolor: 'white',
                             padding: 1,
                             borderRadius: '50%',
-                            '&:hover': { bgcolor: grey[300] },
+                            '&:hover': {bgcolor: grey[300]},
                         }}
                     >
-                        <img src="/images/search.png" alt="검색" style={{ width: 20, height: 20 }} />
+                        <img src="/images/search.png" alt="검색" style={{width: 20, height: 20}}/>
                     </IconButton>
                 </Box>
 
                 {/* 회원 정보 & 삭제 버튼 */}
                 {loading ? (
-                    <Typography variant="h6" sx={{ color: 'white' }}>로딩 중...</Typography>
+                    <Typography variant="h6" sx={{color: 'white'}}>로딩 중...</Typography>
                 ) : (
                     <Box
                         sx={{
@@ -219,13 +234,15 @@ const Page = () => {
                                         mb: 6,
                                     }}
                                 >
-                                    <Box sx={{ width: 'calc(100% - 100px)', marginBottom: -5 }}>
+                                    <Box sx={{width: 'calc(100% - 100px)', marginBottom: -5}}>
                                         <UserInfo
                                             name={user.name}
                                             role={user.role}
                                             email={user.email}
-                                            onEditCafe={() => {}}
-                                            onDeleteCafe={() => {}}
+                                            onEditCafe={() => {
+                                            }}
+                                            onDeleteCafe={() => {
+                                            }}
                                             isConsole={true}
                                         />
                                     </Box>
@@ -233,7 +250,7 @@ const Page = () => {
                                         variant="outlined"
                                         color="error"
                                         size="small"
-                                        sx={{ marginLeft: -10, bgcolor: 'white' }}
+                                        sx={{marginLeft: -10, bgcolor: 'white'}}
                                         onClick={() => handleOpenDeleteDialog(user.id)} // Open delete confirmation dialog
                                     >
                                         삭제
@@ -241,7 +258,7 @@ const Page = () => {
                                 </Box>
                             ))
                         ) : (
-                            <Typography variant="h6" sx={{ color: 'white' }}>사용자가 없습니다.</Typography>
+                            <Typography variant="h6" sx={{color: 'white'}}>사용자가 없습니다.</Typography>
                         )}
                     </Box>
                 )}
@@ -249,7 +266,7 @@ const Page = () => {
 
             {/* 간단 후기 모니터링 */}
             <Box>
-                <Typography variant="h3" sx={{ fontSize: 24, fontWeight: 'bold', mb: 1, color: 'white' }}>
+                <Typography variant="h3" sx={{fontSize: 24, fontWeight: 'bold', mb: 1, color: 'white'}}>
                     간단 후기 모니터링
                 </Typography>
                 <Box
@@ -263,7 +280,7 @@ const Page = () => {
                     }}
                 >
                     {reviewLoading ? (
-                        <Typography variant="h6" sx={{ color: 'white' }}>리뷰 로딩 중...</Typography>
+                        <Typography variant="h6" sx={{color: 'white'}}>리뷰 로딩 중...</Typography>
                     ) : (
                         reviewList.length > 0 ? (
                             reviewList.map((review, index) => (
@@ -278,15 +295,15 @@ const Page = () => {
                                 </Box>
                             ))
                         ) : (
-                            <Typography variant="h6" sx={{ color: 'white' }}>등록된 리뷰가 없습니다.</Typography>
+                            <Typography variant="h6" sx={{color: 'white'}}>등록된 리뷰가 없습니다.</Typography>
                         )
                     )}
                 </Box>
             </Box>
 
             {/* 게시글 모니터링 */}
-            <Box sx={{ flex: 1, borderRadius: 2, p: 0 }}>
-                <Typography variant="h3" sx={{ fontSize: 24, fontWeight: 'bold', mt: 3, mb: 1, color: 'white' }}>
+            <Box sx={{flex: 1, borderRadius: 2, p: 0}}>
+                <Typography variant="h3" sx={{fontSize: 24, fontWeight: 'bold', mt: 3, mb: 1, color: 'white'}}>
                     게시글 모니터링
                 </Typography>
                 <Box
@@ -298,7 +315,7 @@ const Page = () => {
                     }}
                 >
                     {postLoading ? (
-                        <Typography variant="h6" sx={{ color: 'white' }}>게시글 로딩 중...</Typography>
+                        <Typography variant="h6" sx={{color: 'white'}}>게시글 로딩 중...</Typography>
                     ) : (
                         postList.length > 0 ? (
                             postList.map((post, index) => (
@@ -313,7 +330,7 @@ const Page = () => {
                                 </Box>
                             ))
                         ) : (
-                            <Typography variant="h6" sx={{ color: 'white' }}>게시글이 없습니다.</Typography>
+                            <Typography variant="h6" sx={{color: 'white'}}>게시글이 없습니다.</Typography>
                         )
                     )}
                 </Box>
@@ -324,16 +341,24 @@ const Page = () => {
                 <Typography variant="h3" sx={{ fontSize: 24, fontWeight: 'bold', mt: 3, mb: 1, color: 'white' }}>
                     카페 요청
                 </Typography>
+
                 {/* 카페 삭제 요청 */}
                 <Typography variant="h4" sx={{ fontSize: 20, fontWeight: 'bold', mb: 1, color: 'white' }}>
                     삭제 요청
                 </Typography>
-                {[1, 2].map((id) => (
-                    <Box key={id} sx={{ mb: 1, p: 0, borderRadius: 2 }}>
-                        {/* DeleteInfo 컴포넌트 사용 */}
-                        <DeleteInfo cafeID={id} cafeName="에이바우트" reason="더이상 운영하지 않아요." />
-                    </Box>
-                ))}
+                {deleteRequestLoading ? (
+                    <Typography variant="h6" sx={{ color: 'white' }}>삭제 요청을 불러오는 중...</Typography>
+                ) : (
+                    deleteRequest.length > 0 ? (
+                        deleteRequest.map((request) => (
+                            <Box key={request.cafeId} sx={{ mb: 1, p: 0, borderRadius: 2 }}>
+                                <DeleteInfo cafeID={request.cafeId} cafeName={request.cafeName} deleteReason={request.deleteReason} />
+                            </Box>
+                        ))
+                    ) : (
+                        <Typography variant="h6" sx={{ color: 'white' }}>삭제 요청이 없습니다.</Typography>
+                    )
+                )}
 
                 {/* 카페 등록 승인 */}
                 <Typography variant="h4" sx={{ fontSize: 20, fontWeight: 'bold', mt: 2, mb: 1, color: 'white' }}>

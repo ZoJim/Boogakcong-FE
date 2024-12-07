@@ -33,3 +33,5 @@ export const deleteCafe = (reason: number, token: string) => {
 
     return springApiRequest('DELETE', `/api/cafes/owners/request${queryString}`, token, );
 }
+
+export const getCafeDeleteRequest = (token: string) => springApiRequest('GET', '/api/cafes/owners/delete', token);
