@@ -49,6 +49,9 @@ const Page = () => {
     const [isPostingModalOpen, setIsPostingModalOpen] = useState(false);
     const [selectedPosting, setSelectedPosting] = useState<Posting | null>(null);
 
+
+
+
     const openReviewModal = (reviewId: number, currentContent: string) => {
         setSelectedReview({id: reviewId, content: currentContent});
         setIsReviewModalOpen(true);
@@ -70,6 +73,7 @@ const Page = () => {
         setSelectedPosting(null);
         setIsPostingModalOpen(false);
     };
+
 
     const [isRedirecting, setIsRedirecting] = useState(false);
 

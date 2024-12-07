@@ -39,6 +39,22 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
         setIsEditing(false); // 에디터 모드 종료
     };
 
+    const [isDeleteCafeModalOpen, setIsDeleteCafeModalOpen] = useState(false);
+
+    const openDeleteCafeModal = () => {
+        setIsDeleteCafeModalOpen(true);
+    }
+
+    const closeDeleteCafeModal = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsDeleteCafeModalOpen(false);
+    }
+
+    const handleDeleteCafe = async () => {
+
+    }
+
+
     if (isEditing) {
         return (
             <PostingEditor

@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {Backdrop, Box, Button, Modal, Paper, Typography} from '@mui/material';
-import {blue, grey} from '@mui/material/colors';
-import {UserRole} from "@/types";
-import {getCafeStatus} from "@/app/api/user";
+import React, { useEffect, useState } from 'react';
+import { Backdrop, Box, Button, Modal, Paper, Typography } from '@mui/material';
+import { blue, grey } from '@mui/material/colors';
+import { UserRole } from "@/types";
+import { getCafeStatus } from "@/app/api/user";
 import CafeRegisterRequest from "@/components/CafeRegisterRequest";
 import CafeModify from "@/components/CafeModify";
+import DeleteRequest from "@/components/DeleteRequest"; // 삭제 요청 컴포넌트
 
 interface UserInfoProps {
     name: string;
@@ -30,6 +31,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
 
     const [isModalOpen, setIsModalOpen] = useState(false); // 카페 등록 모달 열림/닫힘 상태
     const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 카페 수정 모달 열림/닫힘 상태
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // 카페 삭제 모달 열림/닫힘 상태
 
     useEffect(() => {
         const fetchCafeStatus = async () => {
@@ -114,6 +116,10 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
         return null;
     };
 
+    const handleDeleteClick = () => {
+        setIsDeleteModalOpen(true); // 삭제 모달 열기
+    };
+
     return (
         <>
             <Paper
@@ -145,7 +151,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                 </Typography>
 
                 {/* Footer */}
-                {role === UserRole.ROLE_CAFE_OWNER && (
+                {cafeStatus.allocationStatus == AllocationStatus.APPROVED && (
                     <Box sx={{ mt: 2, textAlign: 'right' }}>
                         {onDeleteCafe && (
                             <Typography
@@ -156,7 +162,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                                     textDecoration: 'underline',
                                     '&:hover': { color: grey[600] },
                                 }}
-                                onClick={onDeleteCafe}
+                                onClick={handleDeleteClick} // 카페 삭제 요청 클릭 핸들러
                             >
                                 카페 삭제 요청
                             </Typography>
@@ -212,7 +218,33 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                     }}
                 >
                     {/* 카페 수정 컴포넌트 */}
-                    <CafeModify cafeId={cafeStatus.cafeId as number}/> {/* 여기에 카페 수정 컴포넌트를 삽입 */}
+                    <CafeModify cafeId={cafeStatus.cafeId as number} /> {/* 여기에 카페 수정 컴포넌트를 삽입 */}
+                </Box>
+            </Modal>
+
+            {/* 카페 삭제 모달 */}
+            <Modal
+                open={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                    style: { backgroundColor: 'rgba(0, 0, 0, 0.6)' },
+                }}
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'white',
+                        borderRadius: 8,
+                    }}
+                >
+                    {/* 카페 삭제 요청 컴포넌트 */}
+                    <DeleteRequest cafeId={cafeStatus.cafeId as number} />
                 </Box>
             </Modal>
         </>
