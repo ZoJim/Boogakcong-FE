@@ -249,25 +249,42 @@ const Page = () => {
                 )}
             </Box>
 
-            <Box sx={{width: '100%', px: 3}}>
-                <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff', mb: 2}}>
+            <Box sx={{ width: '100%', px: 3 }}>
+                <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff', mb: 2 }}>
                     내가 쓴 게시글
                 </Typography>
-                {posts.length > 0 ? (
-                    posts.map((post) => (
-                        <PostingList
-                            key={post.id}
-                            title={post.title}
-                            content={post.content}
-                            createdAt={post.createdAt}
-                            imageUrl={post.imageUrl}
-                            onClick={() => openPostingModal(post)}
-                        />
-                    ))
-                ) : (
-                    <Typography sx={{color: '#ffffff'}}>아직 작성한 게시글이 없습니다.</Typography>
-                )}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        maxHeight: '400px',
+                        overflowY: 'auto',
+                    }}
+                >
+                    {posts.length > 0 ? (
+                        posts.map((post) => (
+                            <Box
+                                key={post.id}
+                                sx={{
+                                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                                }}
+                            >
+                                <PostingList
+                                    title={post.title}
+                                    content={post.content}
+                                    createdAt={post.createdAt}
+                                    imageUrl={post.imageUrl}
+                                    onClick={() => openPostingModal(post)}
+                                />
+                            </Box>
+                        ))
+                    ) : (
+                        <Typography sx={{ color: '#ffffff' }}>아직 작성한 게시글이 없습니다.</Typography>
+                    )}
+                </Box>
             </Box>
+
 
             <Navigation/>
 
