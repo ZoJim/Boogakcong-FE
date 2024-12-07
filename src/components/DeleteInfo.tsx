@@ -6,7 +6,8 @@ interface DeleteInfoProps {
     cafeName: string;
     deleteReason: string;
     requestStatus: string;
-    onApprove: (cafeID: number) => void;  // Add onApprove callback
+    onApprove: (requestId: number) => void;  // Add onApprove callback
+    requestId: number;
 }
 
 enum DeleteReason {
@@ -23,12 +24,12 @@ const RequestStatus = {
 };
 
 
-const DeleteInfo = ({ cafeID, cafeName, deleteReason, onApprove, requestStatus }: DeleteInfoProps) => {
+const DeleteInfo = ({ cafeID, cafeName, deleteReason, onApprove, requestStatus, requestId }: DeleteInfoProps) => {
     console.log(deleteReason);
     console.log('Request Status:', requestStatus);
 
     const handleApprove = () => {
-        onApprove(cafeID);
+        onApprove(requestId);
     };
 
     return (

@@ -39,7 +39,7 @@ const Page = () => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State to handle delete dialog visibility
     const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null); // Store user id to delete
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // State to handle confirmation dialog visibility
-    const [cafeIdToDelete, setCafeIdToDelete] = useState<number | null>(null); // Store cafe id to delete
+    const [requestIdToDelete, setRequestIdToDelete] = useState<number | null>(null); // Store cafe id to delete
 
 
     // Fetch user list
@@ -133,14 +133,14 @@ const Page = () => {
 
 
     const handleDeleteCafe = async () => {
-        if (!token || cafeIdToDelete === null) return;
+        if (!token || requestIdToDelete === null) return;
 
         try {
-            await approveCafeDeleteRequest(token, cafeIdToDelete); // Call API to delete the cafe
+            await approveCafeDeleteRequest(token, requestIdToDelete); // Call API to delete the cafe
             toast.success('카페 삭제가 완료되었습니다.');
 
             // Remove deleted cafe from the delete request list
-            setDeleteRequest(deleteRequest.filter(request => request.cafeId !== cafeIdToDelete));
+            setDeleteRequest(deleteRequest.filter(request => request.requestId !== requestIdToDelete));
             handleCloseConfirmDialog(); // Close the dialog after successful deletion
         } catch (error) {
             toast.error('카페 삭제에 실패했습니다.');
@@ -173,9 +173,13 @@ const Page = () => {
         setUserIdToDelete(null);
     };
 
-    const handleOpenConfirmDialog = (cafeID: number) => {
-        setCafeIdToDelete(cafeID);
-        setOpenConfirmDialog(true); // Open the confirmation dialog
+    const handleOpenConfirmDialog = (requestId: number) => {
+        console.log('Request ID to delete:', requestId); // 여기서 requestId 값을 확인
+        if (requestId === undefined) {
+            console.error('requestId가 undefined입니다!');
+        }
+        setRequestIdToDelete(requestId);
+        setOpenConfirmDialog(true);
     };
 
     return (
@@ -384,6 +388,7 @@ const Page = () => {
                                     deleteReason={request.deleteReason}
                                     requestStatus={request.requestStatus}
                                     onApprove={handleOpenConfirmDialog} // Pass onApprove callback
+                                    requestId={request.id}
                                 />
                             </Box>
                         ))
@@ -438,9 +443,8 @@ const Page = () => {
                     <Typography>정말로 이 카페를 삭제하시겠습니까?</Typography>
                 </DialogContent>
                 <DialogActions>
-                    {/*FIXME: 고치기 */}
                     <Button onClick={handleCloseConfirmDialog} color="primary">취소</Button>
-                    <Button onClick={handleDeleteCafe(1)} color="error">삭제</Button>
+                    <Button onClick={handleDeleteCafe} color="error">삭제</Button>
                 </DialogActions>
             </Dialog>
         </Box>
