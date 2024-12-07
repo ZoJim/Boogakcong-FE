@@ -5,7 +5,7 @@ import { Box, Typography, TextField, Button, IconButton } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import { PieChart, BarChart, LineChart } from '@mui/x-charts';
 import { analyzeUser } from "@/app/api/user";
-import { analyzeCafeCount } from "@/app/api/cafe"; // 새로운 API 호출 함수
+import {addNewCafeByKakao, analyzeCafeCount} from "@/app/api/cafe"; // 새로운 API 호출 함수
 import { analyzePost } from "@/app/api/post"; // 포스팅 API 호출 함수
 
 const Page = () => {
@@ -80,6 +80,19 @@ const Page = () => {
         { id: 1, value: userStats.cafeOwnerCount, color: blue[700], label: '카페 소유자' },
         { id: 2, value: userStats.communityManagerCount, color: blue[900], label: '커뮤니티 매니저' },
     ];
+    // 카카오 API 호출 함수 연결
+    const handleAddNewCafe = () => {
+        if (token) {
+            addNewCafeByKakao(token)
+                .then(response => {
+                    console.log('카페 업데이트 성공:', response);
+                    // 업데이트 성공 후 추가 처리 (예: 알림, 상태 업데이트 등)
+                })
+                .catch(error => {
+                    console.error('카페 업데이트 실패:', error);
+                });
+        }
+    };
 
     return (
         <Box
@@ -191,6 +204,7 @@ const Page = () => {
                             bgcolor: blue[700], // 호버 상태 배경색
                         },
                     }}
+                    onClick={handleAddNewCafe} // 버튼 클릭 시 카페 업데이트 함수 호출
                 >
                     업데이트
                 </Button>

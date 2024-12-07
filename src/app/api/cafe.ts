@@ -52,3 +52,7 @@ export const approveCafeRegisterRequest = (token: string, requestId: number) => 
 }
 
 export const analyzeCafeCount = (token: string) => springApiRequest('GET', '/api/cafes/analysis', token);
+
+export const addNewCafeByKakao = (token: string) => {
+    return springApiRequest('POST', '/api/cafes/kakao', token)
+}
