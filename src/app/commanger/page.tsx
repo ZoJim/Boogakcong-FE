@@ -1,9 +1,7 @@
 'use client';
 
-{/* iPad PRO 11 기준 */}
-
 import React from 'react';
-import { Box, Typography, Card, TextField, Button, IconButton } from '@mui/material';
+import { Box, Typography, TextField, Button, IconButton } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import UserInfo from '@/components/UserInfo';
 import ShortReview from '@/components/ShortReview';
