@@ -34,22 +34,24 @@ const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onRe
                 <Typography variant="h3" sx={{ fontWeight: 'bold', color: grey[900] }}>
                     {name} <span style={{ fontSize: 12, color: grey[700] }}>{role}</span>
                 </Typography>
-                <Button
-                    variant="contained"
-                    size="small"
-                    sx={{
-                        ml: 2,
-                        borderRadius: 10,
-                        height: 25,
-                        fontSize: '0.8rem',
-                        color: 'white',
-                        bgcolor: blue[300],
-                        '&:hover': { bgcolor: blue[500] },
-                    }}
-                    onClick={role === '카페 소유자' ? onEditCafe : onRegisterCafe}
-                >
-                    {role === '카페 소유자' ? '내 카페 수정' : '카페 등록'}
-                </Button>
+                {onEditCafe && (
+                    <Button
+                        variant="contained"
+                        size="small"
+                        sx={{
+                            ml: 2,
+                            borderRadius: 10,
+                            height: 25,
+                            fontSize: '0.8rem',
+                            color: 'white',
+                            bgcolor: blue[300],
+                            '&:hover': { bgcolor: blue[500] },
+                        }}
+                        onClick={role === '카페 소유자' ? onEditCafe : onRegisterCafe}
+                    >
+                        {role === '카페 소유자' ? '내 카페 수정' : '카페 등록'}
+                    </Button>
+                )}
             </Box>
 
             <Typography variant="body1" sx={{ mt: 1, color: grey[800] }}>
@@ -58,18 +60,20 @@ const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onRe
 
             {/* Footer */}
             <Box sx={{ mt: 0 }}>
-                <Typography
-                    variant="body2"
-                    sx={{
-                        textAlign: 'right',
-                        color: 'black',
-                        cursor: 'pointer',
-                        textDecoration: 'underline',
-                    }}
-                    onClick={onDeleteCafe}
-                >
-                    카페 삭제 요청
-                </Typography>
+                {onDeleteCafe && (
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            textAlign: 'right',
+                            color: 'black',
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                        }}
+                        onClick={onDeleteCafe}
+                    >
+                        카페 삭제 요청
+                    </Typography>
+                )}
             </Box>
         </Paper>
     );
