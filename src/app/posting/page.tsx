@@ -74,6 +74,11 @@ const Page = () => {
         setPostings((prev) => [newPost, ...prev]);
         setFilteredPostings((prev) => [newPost, ...prev]);
         setIsEditorOpen(false);
+        getPostAll().then((res) => {
+            setPostings(res);
+            setFilteredPostings(res);
+        })
+
         toast.success("새 게시글이 성공적으로 추가되었습니다.");
     };
 
@@ -233,7 +238,7 @@ const Page = () => {
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 2, // 각 게시물 간 간격 추가
-                            maxHeight: '395px',
+                            maxHeight: '360px',
                             overflowY: 'auto',
                         }}
                     >
