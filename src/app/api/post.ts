@@ -33,3 +33,5 @@ export const savePost = (title: string | undefined, content: string | undefined,
     return springApiRequest('POST', '/api/postings', token, formData, true);
 }
 export const deletePost = (id: number, token: string) => springApiRequest('DELETE', `/api/postings/${id}`, token);
+
+export const analyzePost = (token: string) => springApiRequest('GET', '/api/postings/analysis', token);

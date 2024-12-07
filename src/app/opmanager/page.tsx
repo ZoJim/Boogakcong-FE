@@ -6,6 +6,7 @@ import { blue, grey } from '@mui/material/colors';
 import { PieChart, BarChart, LineChart } from '@mui/x-charts';
 import { analyzeUser } from "@/app/api/user";
 import { analyzeCafeCount } from "@/app/api/cafe"; // 새로운 API 호출 함수
+import { analyzePost } from "@/app/api/post"; // 포스팅 API 호출 함수
 
 const Page = () => {
     const token = localStorage.getItem('accessToken') || null;
@@ -18,6 +19,7 @@ const Page = () => {
     });
 
     const [cafeStats, setCafeStats] = useState<any[]>([]); // 카페 통계
+    const [postStats, setPostStats] = useState<any[]>([]); // 포스팅 통계
 
     // API 호출하여 회원 통계 데이터를 받아오는 함수
     useEffect(() => {
@@ -34,7 +36,6 @@ const Page = () => {
     useEffect(() => {
         if (token) {
             analyzeCafeCount(token).then(response => {
-                // 최근 7일간 카페 데이터 가공
                 const cafeData = response.reverse(); // 최근부터 오므로 역순으로 변경
                 setCafeStats(cafeData);
             }).catch(error => {
@@ -43,8 +44,26 @@ const Page = () => {
         }
     }, [token]);
 
-    const pData = cafeStats.map(stat => stat.newCafeCount); // 신규 카페 수
-    const uData = cafeStats.map(stat => stat.totalCafeCount); // 전체 카페 수
+    // 포스팅 통계 데이터 받아오기
+    useEffect(() => {
+        if (token) {
+            analyzePost(token).then(response => {
+                const postData = response.reverse(); // 포스팅 데이터도 역순으로 처리
+                setPostStats(postData);
+            }).catch(error => {
+                console.error('포스팅 분석 데이터를 불러오는 데 실패했습니다:', error);
+            });
+        }
+    }, [token]);
+
+    // 카페 통계에서 신규 카페 수와 전체 카페 수
+    const cafeNewData = cafeStats.map(stat => stat.newCafeCount); // 신규 카페 수
+    const cafeTotalData = cafeStats.map(stat => stat.totalCafeCount); // 전체 카페 수
+
+    // 포스팅 통계에서 신규 포스트 수와 신규 리뷰 수
+    const postNewData = postStats.map(stat => stat.newPostCount); // 신규 포스트 수
+    const reviewNewData = postStats.map(stat => stat.newReviewCount); // 신규 리뷰 수
+
     // 오늘 날짜를 기준으로 X축 레이블 계산
     const getDayLabel = (offset: number) => {
         const today = new Date();
@@ -54,7 +73,6 @@ const Page = () => {
     };
 
     const xLabels = Array.from({ length: 7 }, (_, i) => getDayLabel(6 - i)); // 7일간의 날짜 레이블 (역순으로)
-
 
     // PieChart 데이터 업데이트
     const pieData = [
@@ -147,8 +165,8 @@ const Page = () => {
                     width={350}
                     height={300}
                     series={[
-                        { data: pData, label: '신규 카페', color: '#0D47A1', id: 'pvId', stack: 'total' },
-                        { data: uData, label: '전체 카페', color: '#1E88E5', id: 'uvId', stack: 'total' },
+                        { data: cafeNewData, label: '신규 카페', color: '#0D47A1', id: 'pvId', stack: 'total' },
+                        { data: cafeTotalData, label: '전체 카페', color: '#1E88E5', id: 'uvId', stack: 'total' },
                     ]}
                     xAxis={[{ data: xLabels, scaleType: 'band' }]}
                 />
@@ -190,8 +208,8 @@ const Page = () => {
                     height={300}
                     sx={{ mb: 3 }}
                     series={[
-                        { data: pData, color: '#0D47A1', label: '게시글' },
-                        { data: uData, color: '#1E88E5', label: '후기글' },
+                        { data: postNewData, color: '#0D47A1', label: '게시글' },
+                        { data: reviewNewData, color: '#1E88E5', label: '후기글' },
                     ]}
                     xAxis={[{ scaleType: 'point', data: xLabels }]}
                 />
