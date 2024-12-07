@@ -12,6 +12,7 @@ import {
 import { getCafeById } from "@/app/api/cafe";
 import { updateCafeDetail } from "@/app/api/cafe"; // postReview 함수 추가
 import KakaoMap from "@/components/KakaoMap";
+import {toast, ToastContainer} from "react-toastify";
 
 interface CafeModifyProps {
     cafeId: number;
@@ -49,7 +50,7 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                 setLoading(false); // 로딩 완료
             } catch (error) {
                 console.error("카페 정보를 가져오는 데 실패했습니다:", error);
-                setError("카페 정보를 가져오는 데 실패했습니다.");
+                toast.error("카페 정보를 가져오는 데 실패했습니다.");
                 setLoading(false);
             }
         };
@@ -67,10 +68,9 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                 outletCount || 0,
                 seatCount || 0
             );
-            alert("카페 정보가 저장되었습니다!");
+            toast.success("카페 정보가 저장되었습니다!");
         } catch (error) {
-            console.error("정보 저장에 실패했습니다:", error);
-            alert("카페 정보 저장에 실패했습니다.");
+            toast.error("카페 정보 저장에 실패했습니다.")
         }
     };
 
@@ -225,7 +225,9 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                     완료
                 </Button>
             </Box>
+            <ToastContainer />
         </Box>
+
     );
 };
 
