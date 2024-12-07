@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, IconButton, Button } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import UserInfo from '@/components/UserInfo';
-import { getUserList } from "@/app/api/user"; // Import getUserList API
+import {deleteUser, getUserList} from "@/app/api/user"; // Import getUserList API
 import { toast } from 'react-toastify';
 import CafeRegister from "@/components/CafeRegister";
 import DeleteInfo from "@/components/DeleteInfo";
@@ -32,6 +32,22 @@ const Page = () => {
             toast.error('사용자 목록을 불러오는 데 실패했습니다.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async (userId: number) => {
+        if (!token) return;
+
+        try {
+            await deleteUser(userId, token); // Call API to delete the user
+            toast.success('사용자가 삭제되었습니다.');
+
+            // Remove deleted user from both lists
+            setUserList(userList.filter(user => user.id !== userId));
+            setFilteredUserList(filteredUserList.filter(user => user.id !== userId));
+        } catch (error) {
+            console.error('사용자 삭제에 실패했습니다:', error);
+            toast.error('사용자 삭제에 실패했습니다.');
         }
     };
 
@@ -154,6 +170,7 @@ const Page = () => {
                                         color="error"
                                         size="small"
                                         sx={{ marginLeft: -10, bgcolor: 'white' }}
+                                        onClick={() => handleDelete(user.id)}
                                     >
                                         삭제
                                     </Button>
