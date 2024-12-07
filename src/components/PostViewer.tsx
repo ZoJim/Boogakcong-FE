@@ -109,7 +109,7 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
                             paddingX: 4,
                             paddingY: 1,
                             color: '#FFFFFF',
-                            backgroundColor: '#2196F3',
+                            backgroundColor: blue[200],
                             '&:hover': {
                                 backgroundColor: '#1976D2',
                             },
