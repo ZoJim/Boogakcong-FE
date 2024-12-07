@@ -132,16 +132,6 @@ const Register = ({ onNavigate }: RegisterProps) => {
                     회원가입
                 </Button>
 
-                <Typography
-                    variant="subtitle1"
-                    style={{
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                    }}
-                    onClick={() => onNavigate("/login")} // 로그인 페이지로 이동
-                >
-                    이미 회원이신가요?
-                </Typography>
             </Box>
         </Box>
     );
