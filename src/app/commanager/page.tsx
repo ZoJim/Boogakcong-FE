@@ -22,7 +22,7 @@ import ShortReview from "@/components/ShortReview";
 import PostingList from "@/components/PostingList";
 import {getReviewList} from "@/app/api/review"; // Import getReviewList API
 import {getPostAll} from "@/app/api/post";
-import {approveCafeDeleteRequest, deleteCafe, getCafeDeleteRequest} from "@/app/api/cafe"; // Import getPostAll API
+import {approveCafeDeleteRequest, deleteCafe, getCafeDeleteRequest, getCafeRegisterRequest} from "@/app/api/cafe"; // Import getPostAll API
 
 const Page = () => {
     const token = localStorage.getItem('accessToken') || null;
@@ -40,6 +40,8 @@ const Page = () => {
     const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null); // Store user id to delete
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // State to handle confirmation dialog visibility
     const [requestIdToDelete, setRequestIdToDelete] = useState<number | null>(null); // Store cafe id to delete
+    const [registerRequest, setRegisterRequest] = useState<any[]>([]); // State for register request
+    const [registerRequestLoading, setRegisterRequestLoading] = useState(false); // State for register request loading
 
 
     // Fetch user list
@@ -103,12 +105,26 @@ const Page = () => {
         }
     };
 
+    const fetchRegisterRequest = async () => {
+        if (!token) return;
+        setRegisterRequestLoading(true);
+        try {
+            const registerRequests = await getCafeRegisterRequest(token);
+            setRegisterRequest(registerRequests);
+        } catch (error) {
+            toast.error('카페 등록 요청 목록을 불러오는 데 실패했습니다.');
+            setRegisterRequestLoading(false);
+
+        }
+    }
+
 
     useEffect(() => {
         fetchUserList();
         fetchReviewList();
         fetchPostList();
         fetchDeleteRequestList();
+        fetchRegisterRequest();
     }, [token]);
 
     const handleApprove = (requestId: string) => {
@@ -367,7 +383,7 @@ const Page = () => {
             </Box>
 
             {/* 카페 삭제 & 등록 요청 */}
-            <Box sx={{flex: 1, borderRadius: 2, p: 0}}>
+            <Box sx={{flex: 1, borderRadius: 2, p: 0, width: 350}}>
                 <Typography variant="h3" sx={{fontSize: 24, fontWeight: 'bold', mt: 3, mb: 1, color: 'white'}}>
                     카페 요청
                 </Typography>
@@ -401,17 +417,22 @@ const Page = () => {
                 <Typography variant="h4" sx={{fontSize: 20, fontWeight: 'bold', mt: 2, mb: 1, color: 'white'}}>
                     등록 요청
                 </Typography>
-                {[1].map((id) => (
-                    <Box key={id} sx={{mb: 1, p: 0, borderRadius: 2}}>
-                        {[{id: '유저1 & 카페1'}, {id: '유저2 & 카페2'}].map((request) => (
+                {registerRequestLoading ? (
+                    registerRequest.length === 0 ? (
+                        <Typography variant="h6" sx={{color: 'white'}}>목록 요청이 없습니다.</Typography>
+                    ) : (
+                        registerRequest.map((register) => (
                             <CafeRegister
-                                key={request.id}
-                                requestId={request.id}
-                                onApprove={() => handleApprove(request.id)}
+                                key={register.id}
+                                requestId={register.id}
+                                cafeId={register.cafeId}
+                                ownerId={register.ownerId}
                             />
-                        ))}
-                    </Box>
-                ))}
+                        ))
+                    )
+                ) : (
+                    <Typography variant="h6" sx={{color: 'white'}}>로딩 중...</Typography>
+                )}
             </Box>
 
             {/* Delete Confirmation Dialog */}
@@ -429,7 +450,6 @@ const Page = () => {
                     <Button onClick={handleCloseDeleteDialog} color="primary">
                         취소
                     </Button>
-                    {/*FIXME: 고치기 */}
                     <Button onClick={handleDeleteUser} color="error">
                         삭제
                     </Button>

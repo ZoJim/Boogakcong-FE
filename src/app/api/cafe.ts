@@ -44,3 +44,9 @@ export const rejectCafeDeleteRequest = (token: string, requestId: number) => {
     const queryString = `?requestId=${encodeURIComponent(requestId)}&accept=false`;
     return springApiRequest('POST', `/api/cafes/owners/delete${queryString}`, token);
 }
+
+export const getCafeRegisterRequest = (token: string) => springApiRequest('GET', '/api/cafes/owners/request', token);
+export const approveCafeRegisterRequest = (token: string, requestId: number) => {
+    const queryString = `?requestId=${encodeURIComponent(requestId)}&accept=true`;
+    return springApiRequest('POST', `/api/cafes/owners/accept${queryString}`, token);
+}
