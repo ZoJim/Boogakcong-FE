@@ -17,13 +17,13 @@ const ShortReview = ({ cafeId, cafeName, content, createdAt, onClick }) => {
       sx={{
         width: 350,
         height: 55,
-        display: 'flex',
+        minHeight: 55,
+          display: 'flex',
         alignItems: 'center', // 카드 내부 컨텐츠 수직 정렬
         boxShadow: "inset 0px 4px 6px rgba(0, 0, 0, 0.2)",
         borderRadius: '12px',
         marginBottom: 1,
         padding: 2, // 내부 패딩 추가
-
       }}
     >
       <CardContent

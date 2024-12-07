@@ -3,7 +3,10 @@
 import React from 'react';
 import {Box} from '@mui/material';
 import {blue} from "@mui/material/colors";
-import Login from "@/components/Login";
+import PostingEditor from "@/components/PostingEditor";
+import CafeRegister from "@/components/CafeRegister";
+import CafeModify from "@/components/CafeModify";
+import CafeRegisterRequest from "@/components/CafeRegisterRequest";
 
 const Page = () => {
 
@@ -19,9 +22,8 @@ const Page = () => {
                 bgcolor: blue[200],
             }}
         >
-            <Login>
-
-            </Login>
+            <CafeRegisterRequest
+            ></CafeRegisterRequest>
         </Box>
     );
 };

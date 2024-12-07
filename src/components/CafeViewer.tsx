@@ -5,6 +5,8 @@ import {blue, grey} from "@mui/material/colors";
 import { postReview } from '@/app/api/review'; // 리뷰 등록 API
 import {accessTokenAtom} from "@/state/authAtom";
 import {useAtomValue} from "jotai";
+import {toast, ToastContainer} from "react-toastify";
+import {getCafeById} from "@/app/api/cafe";
 
 interface CafeViewerProps {
     id: number;
@@ -46,27 +48,24 @@ const CafeViewer = (
     }: CafeViewerProps
 ) => {
     const [newComment, setNewComment] = useState('');
-    const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null); // Success or error message
-    const accessToken = useAtomValue(accessTokenAtom); // Jotai로 accessToken 가져오기
+    const accessToken = localStorage.getItem('accessToken');
     const isLoggedIn = Boolean(accessToken); // 로그인 여부 결정
 
     const handleCommentSubmit = async () => {
         if (!newComment.trim()) {
-            setFeedbackMessage('리뷰 내용을 입력해주세요.');
+            toast.error('리뷰를 입력해주세요.');
             return;
         }
 
         try {
             await postReview(accessToken as string, id, newComment.trim());
             setNewComment(''); // Clear the input field
-            setFeedbackMessage('리뷰가 성공적으로 등록되었습니다.');
+            toast.success('리뷰가 등록되었습니다.');
+            const updatedCafe = await getCafeById(id);
         } catch (error) {
             console.error('리뷰 등록 실패:', error);
-            setFeedbackMessage('리뷰 등록에 실패했습니다. 다시 시도해주세요.');
+            toast.error('리뷰 등록에 실패했습니다.');
         }
-
-        // 메시지는 몇 초 후 사라지게 설정
-        setTimeout(() => setFeedbackMessage(null), 3000);
     };
 
 
@@ -82,6 +81,17 @@ const CafeViewer = (
                 alignItems: 'center',
             }}
         >
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <Typography
                 variant="h3"
                 sx={{
