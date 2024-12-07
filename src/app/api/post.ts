@@ -20,3 +20,15 @@ export const patchPost = (id: number, title: string, content: string, image: Fil
 
     return springApiRequest('PATCH', `/api/postings/${id}`, token, formData, true);
 }
+
+export const savePost = (title: string, content: string, image: File | string | null, postType:PostType, token: string) => {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    if (image) {
+        formData.append('file', image);
+    }
+    formData.append('postType', postType.toString());
+
+    return springApiRequest('POST', '/api/postings', token, formData, true);
+}

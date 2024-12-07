@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Backdrop, Box, CardMedia, Chip, Typography } from '@mui/material';
+import {Backdrop, Box, Button, CardMedia, Chip, Typography} from '@mui/material';
 import PostingList from "@/components/PostingList";
 import NavigationBar from "@/components/Navigation";
-import { blue } from "@mui/material/colors";
+import {blue, grey} from "@mui/material/colors";
 import { Posting, PostType } from "@/types";
 import PostingViewer from "@/components/PostViewer";
 import {getPostAll, getTopPost, patchPost} from "@/app/api/post";
 import {toast} from "react-toastify";
+import PostingEditor from "@/components/PostingEditor";
 
 const Page = () => {
     const [selectedPosting, setSelectedPosting] = useState<Posting | null>(null); // 선택된 게시글 상태
@@ -18,6 +19,8 @@ const Page = () => {
     const [filteredPostings, setFilteredPostings] = useState<Posting[]>([]); // 필터링된 게시글 상태
     const [topPosting, setTopPosting] = useState<Posting | null>(null); // 인기 글 상태
     const token = localStorage.getItem("accessToken") || null;
+    const [isEditorOpen, setIsEditorOpen] = useState(false); // 새 포스팅 모달 상태
+
 
     // 서버에서 게시글 목록을 가져오는 함수
     useEffect(() => {
@@ -67,6 +70,12 @@ const Page = () => {
     };
 
 
+    const handleNewPostSave = (newPost: Posting) => {
+        setPostings((prev) => [newPost, ...prev]);
+        setFilteredPostings((prev) => [newPost, ...prev]);
+        toast.success("새 게시글이 성공적으로 추가되었습니다.");
+        setIsEditorOpen(false);
+    };
 
     const handlePostUpdate = async (
         id: number,
@@ -192,6 +201,23 @@ const Page = () => {
                                 onClick={() => setSelectedFilter(PostType.REVIEW)}
                                 sx={{ backgroundColor: selectedFilter === PostType.REVIEW ? "#90caf9" : undefined }}
                             />
+
+                            <Button
+                                variant="contained"
+                                onClick={() => setIsEditorOpen(true)}
+                                sx={{
+                                    ml: 2,
+                                    borderRadius: 8,
+                                    color: grey[800], // 텍스트 색상을 은은한 검은색으로 설정
+                                    backgroundColor: grey[300], // 기본 Chip과 비슷한 은은한 회색
+                                    opacity: 0.9, // 약간의 불투명도 추가
+                                    '&:hover': {
+                                        backgroundColor: grey[400], // Hover 시 약간 더 진한 회색
+                                    },
+                            }}
+                            >
+                                작성
+                            </Button>
                         </Box>
                     </Box>
                     <Box
@@ -263,6 +289,14 @@ const Page = () => {
                     </Box>
                 )}
             </Backdrop>
+            {/* 새 글 작성 모달 */}
+            {isEditorOpen && (
+                <PostingEditor
+                    postType={selectedFilter || PostType.RECRUITMENT}
+                    onSave={handleNewPostSave}
+                    onCancel={() => setIsEditorOpen(false)}
+                />
+            )}
         </Box>
     );
 };
