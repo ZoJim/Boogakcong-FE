@@ -29,7 +29,14 @@ const Page = () => {
     >([]);
     const [posts, setPosts] = useState<
         {
-            postType: PostType; id: number; title: string; content: string; createdAt: string; imageUrl: string; userId: number}[]
+            postType: PostType;
+            id: number;
+            title: string;
+            content: string;
+            createdAt: string;
+            imageUrl: string;
+            userId: number
+        }[]
     >([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -112,7 +119,7 @@ const Page = () => {
         }
     };
 
-    const handlePostUpdate = async (id: number, updatedTitle: string, updatedContent: string, updatedImage: File | string | null, postType:PostType) => {
+    const handlePostUpdate = async (id: number, updatedTitle: string, updatedContent: string, updatedImage: File | string | null, postType: PostType) => {
         try {
             if (!token) {
                 console.error("로그인이 필요합니다.");
@@ -126,7 +133,7 @@ const Page = () => {
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>
                     post.id === id
-                        ? { ...post, title: updatedTitle, content: updatedContent, imageUrl: updatedImage as string }
+                        ? {...post, title: updatedTitle, content: updatedContent, imageUrl: updatedImage as string}
                         : post
                 )
             );
@@ -177,6 +184,8 @@ const Page = () => {
 
         try {
             const response = await getMyReview(token);
+            console.log("getMyReview response:", response); // 반환값 확인
+
             setReviews(
                 response.map((review: any) => ({
                     id: review.id,
@@ -185,6 +194,8 @@ const Page = () => {
                     createdAt: review.createdAt,
                 }))
             );
+
+            console.log("내가 쓴 리뷰:", response);
         } catch (err: any) {
             if (err.response?.status === 403) {
                 handle403Error();
@@ -241,7 +252,7 @@ const Page = () => {
                 backgroundColor: blue[200],
             }}
         >
-            <ToastContainer />
+            <ToastContainer/>
             {error && (
                 <Typography color="error" sx={{mb: 2}}>
                     {error}
@@ -250,15 +261,15 @@ const Page = () => {
 
 
             {userInfo && (
-                <Box sx={{ width: '100%', px: 3, mb: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1 }}>
+                <Box sx={{width: '100%', px: 3, mb: 1}}>
+                    <Box sx={{display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1}}>
                         <CardMedia
                             component="img"
                             src="/images/mypage_white.png"
                             alt="회원 정보"
-                            sx={{ width: 20, height: 20, mr: 1 }}
+                            sx={{width: 20, height: 20, mr: 1}}
                         />
-                        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
+                        <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff'}}>
                             회원 정보
                         </Typography>
                     </Box>
@@ -274,25 +285,39 @@ const Page = () => {
                 <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff', mb: 2}}>
                     내가 쓴 후기
                 </Typography>
-                {reviews.length > 0 ? (
-                    reviews.map((review) => (
-                        <ShortReview
-                            key={review.id}
-                            cafeName={review.cafeName}
-                            content={review.content}
-                            createdAt={review.createdAt}
-                            onClick={() =>
-                                openReviewModal(review.id, review.content)
-                        }
-                        />
-                    ))
-                ) : (
-                    <Typography sx={{color: '#ffffff'}}>아직 작성한 리뷰가 없습니다.</Typography>
-                )}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        maxHeight: '100px',
+                        maxWidth: '360',
+                        minWidth: '360',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        alignItems: 'center'
+                    }}
+                >
+                    {reviews.length > 0 ? (
+                        reviews.map((review) => (
+                            <ShortReview
+                                key={review.id}
+                                cafeName={review.cafeName}
+                                content={review.content}
+                                createdAt={review.createdAt}
+                                onClick={() =>
+                                    openReviewModal(review.id, review.content)
+                                }
+                            />
+                        ))
+                    ) : (
+                        <Typography sx={{color: '#ffffff'}}>아직 작성한 리뷰가 없습니다.</Typography>
+                    )}
+                </Box>
             </Box>
 
-            <Box sx={{ width: '100%', px: 3 }}>
-                <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff', mb: 2 }}>
+            <Box sx={{width: '100%', px: 3}}>
+                <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff', mb: 2}}>
                     내가 쓴 게시글
                 </Typography>
                 <Box
@@ -311,8 +336,7 @@ const Page = () => {
                         posts.map((post) => (
                             <Box
                                 key={post.id}
-                                sx={{
-                                }}
+                                sx={{}}
                             >
                                 <PostingList
                                     title={post.title}
@@ -326,7 +350,7 @@ const Page = () => {
                             </Box>
                         ))
                     ) : (
-                        <Typography sx={{ color: '#ffffff' }}>아직 작성한 게시글이 없습니다.</Typography>
+                        <Typography sx={{color: '#ffffff'}}>아직 작성한 게시글이 없습니다.</Typography>
                     )}
                 </Box>
             </Box>
