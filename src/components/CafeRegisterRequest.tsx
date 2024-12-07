@@ -3,6 +3,7 @@ import {Box, Button, Card, CardContent, Typography, Select, MenuItem, FormContro
 import {blue} from '@mui/material/colors';
 import {getCafeAll, requestCafeRegister} from '@/app/api/cafe'; // API 가져오기
 import {toast} from 'react-toastify';
+import cafe from "@/mocks/cafe";
 
 interface Cafe {
     id: number;
@@ -56,7 +57,9 @@ const CafeRegister = () => {
         );
 
         console.log(`Selected Cafe ID: ${selectedCafeId}`);
-        toast.success(`카페 ID ${selectedCafeId} 등록 신청 완료!`);
+        toast.success(`카페 주인 등록 신청 완료!`);
+        // 다시 조회
+        window.location.reload();
     };
 
     return (
@@ -64,7 +67,7 @@ const CafeRegister = () => {
         <Card
             sx={{
                 width: 350,
-                borderRadius: 2,
+                borderRadius: 8,
                 boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
                 padding: 2,
             }}
