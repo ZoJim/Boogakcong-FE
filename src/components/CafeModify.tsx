@@ -10,6 +10,7 @@ import {
     Card,
 } from "@mui/material";
 import { getCafeById } from "@/app/api/cafe";
+import { updateCafeDetail } from "@/app/api/cafe"; // postReview 함수 추가
 import KakaoMap from "@/components/KakaoMap";
 
 interface CafeModifyProps {
@@ -18,14 +19,16 @@ interface CafeModifyProps {
 
 const CafeModify = ({ cafeId }: CafeModifyProps) => {
     // 카페 정보 상태 변수들
-    const [notice, setNotice] = useState(""); // 공지사항 입력
-    const [wifi, setWifi] = useState("유"); // 와이파이 유무 선택
+    const [notice, setNotice] = useState<string>(""); // 공지사항 입력
+    const [wifi, setWifi] = useState<string>("유"); // 와이파이 유무 선택
     const [outletCount, setOutletCount] = useState<number | undefined>(); // 콘센트 수
     const [seatCount, setSeatCount] = useState<number | undefined>(); // 최대 좌석 수
     const [cafeName, setCafeName] = useState<string>("");
-
+    const [longitude, setLongitude] = useState<number>(127.108622);
+    const [latitude, setLatitude] = useState<number>(37.401219);
     const [loading, setLoading] = useState(true); // 로딩 상태
     const [error, setError] = useState<string | null>(null); // 에러 메시지
+    const token = localStorage.getItem("accessToken") || ""; // 토큰 불러오기
 
     // 카페 정보 불러오기
     useEffect(() => {
@@ -33,11 +36,16 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
             try {
                 const cafeData = await getCafeById(cafeId); // API 호출
                 console.log("API 호출 결과:", cafeData); // API 호출 결과 출력
-                setNotice(cafeData.notice || ""); // 기존 공지사항
-                setWifi(cafeData.wifi || "유"); // 기존 와이파이 유무
-                setCafeName(cafeData.cafeName || "");
-                setOutletCount(cafeData.outletCount); // 기존 콘센트 수
-                setSeatCount(cafeData.seatCount); // 기존 좌석 수
+
+                // 상태에 데이터 설정
+                setCafeName(cafeData.name || ""); // 카페 이름
+                setNotice(cafeData.notice || ""); // 공지사항
+                setWifi(cafeData.wifi || "유"); // 와이파이 유무
+                setLongitude(cafeData.longitude || 127.108622); // 경도
+                setLatitude(cafeData.latitude || 37.401219); // 위도
+                setOutletCount(cafeData.outletCount || 0); // 콘센트 수
+                setSeatCount(cafeData.maxPeoplePerTable || 0); // 최대 좌석 수
+
                 setLoading(false); // 로딩 완료
             } catch (error) {
                 console.error("카페 정보를 가져오는 데 실패했습니다:", error);
@@ -49,12 +57,21 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
         fetchCafe();
     }, [cafeId]); // cafeId가 변경될 때마다 다시 호출
 
-    const handleSubmit = () => {
-        console.log("공지사항:", notice);
-        console.log("와이파이:", wifi);
-        console.log("콘센트 수:", outletCount);
-        console.log("최대 좌석 수:", seatCount);
-        alert("카페 정보가 저장되었습니다!");
+    const handleSubmit = async () => {
+        // postReview를 통해 카페 정보 업데이트
+        try {
+            await updateCafeDetail(
+                token,
+                notice,
+                wifi === "유", // 와이파이 유무를 boolean 값으로 변환
+                outletCount || 0,
+                seatCount || 0
+            );
+            alert("카페 정보가 저장되었습니다!");
+        } catch (error) {
+            console.error("정보 저장에 실패했습니다:", error);
+            alert("카페 정보 저장에 실패했습니다.");
+        }
     };
 
     // 로딩 상태 및 에러 처리
@@ -106,7 +123,7 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
 
                 {/* 카카오맵 */}
                 <Box sx={{ width: "100%", height: 200, marginBottom: 2 }}>
-                    <KakaoMap initialLon={127.108622} initialLat={37.401219} level={3} mapId={1} />
+                    <KakaoMap initialLon={longitude} initialLat={latitude} level={4} mapId={1} />
                 </Box>
 
                 {/* 공지사항 */}
