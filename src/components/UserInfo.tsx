@@ -38,6 +38,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                     allocationStatus: res.allocationStatus,
                     cafeId: res.cafeId,
                 });
+                console.log("res: " + res);
             } catch (error) {
                 console.error('Error fetching cafe status:', error);
             }
@@ -67,7 +68,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
             );
         }
 
-        if (role === UserRole.ROLE_CAFE_OWNER && cafeStatus.allocationStatus === AllocationStatus.APPROVED) {
+        if (cafeStatus.allocationStatus === AllocationStatus.APPROVED) {
             return (
                 <Button
                     variant="contained"
