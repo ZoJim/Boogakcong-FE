@@ -47,7 +47,7 @@ const CafeViewer = (
 ) => {
     const [newComment, setNewComment] = useState('');
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null); // Success or error message
-    const accessToken = useAtomValue(accessTokenAtom); // Jotai로 accessToken 가져오기
+    const accessToken = localStorage.getItem('accessToken');
     const isLoggedIn = Boolean(accessToken); // 로그인 여부 결정
 
     const handleCommentSubmit = async () => {

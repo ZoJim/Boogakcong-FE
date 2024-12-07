@@ -10,7 +10,7 @@ import UserInfo from '@/components/UserInfo';
 import {getUser} from '@/app/api/user';
 import {deleteReview, getMyReview, updateReview} from '@/app/api/review';
 import {Posting, PostType, UserRole} from '@/types';
-import {getMyPost, patchPost} from '@/app/api/post';
+import {getMyPost, getPostAll, patchPost} from '@/app/api/post';
 import PostingViewer from '@/components/PostViewer';
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -94,6 +94,7 @@ const Page = () => {
                 )
             );
             setIsReviewModalOpen(false);
+            getPostAll();
         } catch (err) {
             console.log('Error updating review:', err);
         }
@@ -129,8 +130,8 @@ const Page = () => {
                         : post
                 )
             );
-
-            toast.success("게시글이 성공적으로 수정되었습니다.");
+            setIsPostingModalOpen(false);
+            toast.success("게시글이 수정되었습니다.");
         } catch (error) {
             console.error("게시글 수정 중 오류 발생:", error);
             console.log(
@@ -143,6 +144,8 @@ const Page = () => {
             )
             toast.error("게시글 수정 중 문제가 발생했습니다.");
         }
+
+        await getPostAll();
     };
 
     const fetchUserInfo = async () => {

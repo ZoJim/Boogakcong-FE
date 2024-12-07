@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Button, CardMedia, Modal, TextField, Typography } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { PostType } from "@/types";
-import { patchPost } from "@/app/api/post";
+import {getPostAll, patchPost, savePost} from "@/app/api/post";
 
 interface PostingEditorProps {
     id?: number; // 수정 모드일 경우 id가 필요
@@ -46,24 +46,51 @@ const PostingEditor = ({
         }
     };
 
+    // const handleSave = async () => {
+    //     if (!id || !token || !postType) {
+    //         console.error("필수 값(id, token, postType)이 누락되었습니다.", { id, token, postType });
+    //         alert("필수 값이 누락되었습니다. 다시 시도해주세요.");
+    //         console.log(id, token, postType);
+    //         return;
+    //     }
+    //
+    //     try {
+    //         // API 호출
+    //         await patchPost(id, updatedTitle, updatedContent, image, postType, token);
+    //         // 상위 컴포넌트에 저장된 데이터 전달
+    //         onSave(updatedTitle, updatedContent, image || preview);
+    //         // 성공적으로 완료 후 Modal 닫기
+    //         onCancel();
+    //     } catch (error) {
+    //         console.error("Error while updating post:", error);
+    //         alert("게시글 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
+    //     }
+    // };
+
     const handleSave = async () => {
-        if (!id || !token || !postType) {
-            console.error("필수 값(id, token, postType)이 누락되었습니다.", { id, token, postType });
+        if (!token || !postType) {
+            console.error("필수 값(token, postType)이 누락되었습니다.", { token, postType });
             alert("필수 값이 누락되었습니다. 다시 시도해주세요.");
-            console.log(id, token, postType);
             return;
         }
 
         try {
-            // API 호출
-            await patchPost(id, updatedTitle, updatedContent, image, postType, token);
+            if (isEditMode && id) {
+                // 수정 모드
+                await patchPost(id, updatedTitle, updatedContent, image, postType, token);
+            } else {
+                // 새 게시글 저장
+                await savePost(updatedTitle, updatedContent, image, postType, token);
+            }
+
             // 상위 컴포넌트에 저장된 데이터 전달
             onSave(updatedTitle, updatedContent, image || preview);
             // 성공적으로 완료 후 Modal 닫기
             onCancel();
+            getPostAll();
         } catch (error) {
-            console.error("Error while updating post:", error);
-            alert("게시글 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
+            console.error("Error while saving post:", error);
+            alert("게시글 저장 중 문제가 발생했습니다. 다시 시도해주세요.");
         }
     };
 
