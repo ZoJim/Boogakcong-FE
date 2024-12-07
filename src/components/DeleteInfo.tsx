@@ -5,7 +5,7 @@ interface DeleteInfoProps {
     cafeID: number;
     cafeName: string;
     deleteReason: string;
-    requestStatus: RequestStatus;
+    requestStatus: string;
     onApprove: (cafeID: number) => void;  // Add onApprove callback
 }
 
@@ -15,11 +15,13 @@ enum DeleteReason {
     ETC = "기타"
 }
 
-enum RequestStatus {
-    REQUESTED = 0,
-    ACCEPTED = 1,
-    REJECTED = 2
-}
+// requestStatus values are now strings
+const RequestStatus = {
+    REQUESTED: "REQUESTED",
+    ACCEPTED: "ACCEPTED",
+    REJECTED: "REJECTED"
+};
+
 
 const DeleteInfo = ({ cafeID, cafeName, deleteReason, onApprove, requestStatus }: DeleteInfoProps) => {
     console.log(deleteReason);
@@ -53,7 +55,6 @@ const DeleteInfo = ({ cafeID, cafeName, deleteReason, onApprove, requestStatus }
                 </Typography>
             </Box>
 
-            {/* Delete Approval Button */}
             <Button
                 variant="outlined"
                 color="success"
