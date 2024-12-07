@@ -17,15 +17,39 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await login(email, password);
-            setAccessToken(response.accessToken); // Access Token 저장
-            setRefreshToken(response.refreshToken); // Refresh Token 저장
-            console.log('Login successful');
-            console.log('Access Token:', response.accessToken);
-            console.log('Refresh Token:', response.refreshToken);
-            router.push('/cafe'); // 로그인 성공 시 /cafe로 이동
+            console.log('Attempting login with email:', email);
+            const userData = await login(email, password); // API call to login
+            console.log('Login successful:', userData);
+
+            // Check if accessToken and refreshToken exist
+            if (!userData.accessToken || !userData.refreshToken) {
+                throw new Error('Tokens are missing. Please log in again.');
+            }
+
+            // Save tokens
+            setAccessToken(userData.accessToken);
+            setRefreshToken(userData.refreshToken);
+
+            // Navigate to main page
+            router.push('/cafe');
         } catch (error) {
             console.error('Login failed:', error);
+
+            // Check for missing tokens or other errors
+            if (error.message === 'Tokens are missing. Please log in again.') {
+                alert('Login failed. Please try again.');
+            } else if (error.status === 404) {
+                alert('Invalid email or password. Please try again.');
+            } else {
+                alert('Something went wrong. Please try again later.');
+            }
+
+            // Clear any stored tokens
+            setAccessToken(null);
+            setRefreshToken(null);
+
+            // Optionally redirect to login page
+            router.push('/login');
         }
     };
 

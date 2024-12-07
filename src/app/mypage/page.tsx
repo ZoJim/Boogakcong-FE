@@ -14,9 +14,13 @@ import {accessTokenAtom} from '@/state/authAtom';
 import {Posting, UserRole} from '@/types';
 import {getMyPost} from '@/app/api/post';
 import PostingViewer from '@/components/PostViewer';
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {useRouter} from 'next/navigation';
 
 const Page = () => {
     const token = useAtomValue(accessTokenAtom);
+    const router = useRouter();
     const [userInfo, setUserInfo] = useState<{
         name: string;
         role: UserRole;
@@ -50,15 +54,30 @@ const Page = () => {
     };
 
     const closeReviewModal = (e: React.MouseEvent) => {
-        e.stopPropagation(); // 클릭 이벤트 전파 방지
+        e.stopPropagation();
         setSelectedReview(null);
         setIsReviewModalOpen(false);
     };
 
     const closePostingModal = (e: React.MouseEvent) => {
-        e.stopPropagation(); // 클릭 이벤트 전파 방지
+        e.stopPropagation();
         setSelectedPosting(null);
         setIsPostingModalOpen(false);
+    };
+
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
+    const handle403Error = () => {
+        if (!isRedirecting) {
+            setIsRedirecting(true);
+            toast.error('로그인이 필요합니다.', {
+                position: 'top-center',
+                autoClose: 3000,
+            });
+            setTimeout(() => {
+                router.push('/login');
+            }, 3000);
+        }
     };
 
     const handleSaveReview = async () => {
@@ -89,73 +108,83 @@ const Page = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            if (!token) {
-                setError('로그인이 필요합니다.');
-                return;
-            }
+    const fetchUserInfo = async () => {
+        if (!token) {
+            handle403Error();
+            return;
+        }
 
-            try {
-                const user = await getUser(token);
-                setUserInfo({
-                    name: user.name,
-                    role: user.role,
-                    email: user.email,
-                });
-                setError(null);
-            } catch (err) {
+        try {
+            const user = await getUser(token);
+            setUserInfo({
+                name: user.name,
+                role: user.role,
+                email: user.email,
+            });
+            setError(null);
+        } catch (err: any) {
+            if (err.response?.status === 403) {
+                handle403Error();
+            } else {
                 console.error('Error fetching user info:', err);
                 setError('사용자 정보를 가져오는 데 실패했습니다.');
             }
-        };
+        }
+    };
 
-        fetchUserInfo();
-    }, [token]);
+    const fetchMyReviews = async () => {
+        if (!token) return;
 
-    useEffect(() => {
-        const fetchMyReviews = async () => {
-            if (!token) return;
-
-            try {
-                const response = await getMyReview(token);
-                setReviews(
-                    response.map((review: any) => ({
-                        id: review.id,
-                        cafeName: review.cafeName,
-                        content: review.content,
-                        createdAt: review.createdAt,
-                    }))
-                );
-            } catch (err) {
+        try {
+            const response = await getMyReview(token);
+            setReviews(
+                response.map((review: any) => ({
+                    id: review.id,
+                    cafeName: review.cafeName,
+                    content: review.content,
+                    createdAt: review.createdAt,
+                }))
+            );
+        } catch (err: any) {
+            if (err.response?.status === 403) {
+                handle403Error();
+            } else {
                 console.error('Error fetching my reviews:', err);
             }
-        };
+        }
+    };
 
-        fetchMyReviews();
-    }, [token]);
+    const fetchMyPosts = async () => {
+        if (!token) return;
 
-    useEffect(() => {
-        const fetchMyPosts = async () => {
-            if (!token) return;
-
-            try {
-                const response = await getMyPost(token);
-                setPosts(
-                    response.map((post: any) => ({
-                        id: post.id,
-                        title: post.title,
-                        content: post.content,
-                        createdAt: post.createdAt,
-                        imageUrl: post.imageUrl,
-                    }))
-                );
-            } catch (err) {
+        try {
+            const response = await getMyPost(token);
+            setPosts(
+                response.map((post: any) => ({
+                    id: post.id,
+                    title: post.title,
+                    content: post.content,
+                    createdAt: post.createdAt,
+                    imageUrl: post.imageUrl,
+                }))
+            );
+        } catch (err: any) {
+            if (err.response?.status === 403) {
+                handle403Error();
+            } else {
                 console.error('Error fetching my posts:', err);
             }
-        };
+        }
+    };
 
-        fetchMyPosts();
+    useEffect(() => {
+        if (!token) {
+            handle403Error();
+        } else {
+            fetchUserInfo();
+            fetchMyReviews();
+            fetchMyPosts();
+        }
     }, [token]);
 
     return (
@@ -170,22 +199,24 @@ const Page = () => {
                 bgcolor: blue[200],
             }}
         >
+            <ToastContainer />
             {error && (
                 <Typography color="error" sx={{mb: 2}}>
                     {error}
                 </Typography>
             )}
 
+
             {userInfo && (
-                <Box sx={{width: '100%', px: 3, mb: 1}}>
-                    <Box sx={{display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1}}>
+                <Box sx={{ width: '100%', px: 3, mb: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5, mt: -8, mb: 1 }}>
                         <CardMedia
                             component="img"
                             src="/images/mypage_white.png"
                             alt="회원 정보"
-                            sx={{width: 20, height: 20, mr: 1}}
+                            sx={{ width: 20, height: 20, mr: 1 }}
                         />
-                        <Typography variant="h3" sx={{fontWeight: 'bold', color: '#ffffff'}}>
+                        <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffffff' }}>
                             회원 정보
                         </Typography>
                     </Box>
