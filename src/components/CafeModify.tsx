@@ -7,6 +7,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Card,
 } from "@mui/material";
 import { blue, grey } from "@mui/material/colors";
 
@@ -32,121 +33,132 @@ const CafeModify = () => {
         alignItems: "center",
         justifyContent: "center",
         p: 3,
-        bgcolor: "white",
-        borderRadius: 5,
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        width: 350,
+        minHeight: "100vh",
       }}
     >
-      {/* 제목 */}
-      <Typography
-        variant="h3"
-        sx={{
-          width: "100%",
-          textAlign: "center",
-          marginBottom: 2,
-          marginTop: 4,
-        }}
-      >
-        유일무이 카페
-      </Typography>
-
-      {/* 지도 */}
-      <Box
-        sx={{
-          width: "100%",
-          height: 150,
-          backgroundColor: grey[200],
-          borderRadius: 2,
-          mb: 2,
-          backgroundImage: "url('/images/map-placeholder.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <img
-            src="/images/map.png"
-            alt="지도 아이콘"
-            style={{ width: 50, height: 50 }}
-          />
-        </Box>
-      </Box>
-
-      {/* 공지사항 */}
-      <Box sx={{ width: "100%", marginBottom: 4 }}>
-        <TextField
-          id="notification"
-          label="공지사항"
-          multiline
-          rows={4}
-          fullWidth
-          value={notice}
-          onChange={(e) => setNotice(e.target.value)}
-        />
-      </Box>
-
-      {/* 와이파이 유무 & 콘센트/최대 좌석 */}
-      <Box
+      <Card
         sx={{
           display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flexDirection: "column",
           alignItems: "center",
-          width: "100%",
-          mb: 2,
+          justifyContent: "center",
+          p: 3,
+          bgcolor: "white",
+          borderRadius: 5,
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          width: 350,
         }}
       >
-        {/* 와이파이 유무 */}
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
-            와이파이 유무
-          </Typography>
-          <RadioGroup
-            value={wifi}
-            onChange={(e) => setWifi(e.target.value)}
+        {/* 제목 */}
+        <Typography
+          variant="h3"
+          sx={{
+            width: "100%",
+            textAlign: "center",
+            marginBottom: 2,
+            marginTop: 4,
+          }}
+        >
+          유일무이 카페
+        </Typography>
+
+        {/* 지도 */}
+        <Box
+          sx={{
+            width: "100%",
+            height: 150,
+            backgroundColor: grey[200],
+            borderRadius: 2,
+            mb: 2,
+            backgroundImage: "url('/images/map-placeholder.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
           >
-            <FormControlLabel value="유" control={<Radio />} label="유" />
-            <FormControlLabel value="무" control={<Radio />} label="무" />
-          </RadioGroup>
+            <img
+              src="/images/map.png"
+              alt="지도 아이콘"
+              style={{ width: 50, height: 50 }}
+            />
+          </Box>
         </Box>
 
-        {/* 콘센트 수 & 최대 좌석 수 */}
+        {/* 공지사항 */}
+        <Box sx={{ width: "100%", marginBottom: 4 }}>
+          <TextField
+            id="notification"
+            label="공지사항"
+            multiline
+            rows={4}
+            fullWidth
+            value={notice}
+            onChange={(e) => setNotice(e.target.value)}
+          />
+        </Box>
+
+        {/* 와이파이 유무 & 콘센트/최대 좌석 */}
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
+            justifyContent: "space-between",
             alignItems: "center",
+            width: "100%",
+            mb: 2,
           }}
         >
-          <TextField
-            type="number"
-            label="콘센트 수"
-            size="small"
-            value={outletCount || ""}
-            onChange={(e) => setOutletCount(Number(e.target.value))}
+          {/* 와이파이 유무 */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+              와이파이 유무
+            </Typography>
+            <RadioGroup
+              value={wifi}
+              onChange={(e) => setWifi(e.target.value)}
+            >
+              <FormControlLabel value="유" control={<Radio />} label="유" />
+              <FormControlLabel value="무" control={<Radio />} label="무" />
+            </RadioGroup>
+          </Box>
+
+          {/* 콘센트 수 & 최대 좌석 수 */}
+          <Box
             sx={{
-              width: 100,
-              mb: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
-          />
-          <TextField
-            type="number"
-            label="최대 좌석 수"
-            size="small"
-            value={seatCount || ""}
-            onChange={(e) => setSeatCount(Number(e.target.value))}
-            sx={{ width: 100 }}
-          />
+          >
+            <TextField
+              type="number"
+              label="콘센트 수"
+              size="small"
+              value={outletCount || ""}
+              onChange={(e) => setOutletCount(Number(e.target.value))}
+              sx={{
+                width: 100,
+                mb: 2,
+              }}
+            />
+            <TextField
+              type="number"
+              label="최대 좌석 수"
+              size="small"
+              value={seatCount || ""}
+              onChange={(e) => setSeatCount(Number(e.target.value))}
+              sx={{ width: 100 }}
+            />
+          </Box>
         </Box>
-      </Box>
+      </Card>
 
       {/* 완료 버튼 */}
       <Box
