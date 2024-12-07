@@ -1,10 +1,11 @@
 import React from 'react';
 import { Box, Typography, Button, Paper } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
+import {UserRole} from "@/types";
 
 interface UserInfoProps {
     name: string;
-    role: string;
+    role: UserRole;
     email: string;
     onEditCafe?: () => void; // 내 카페 수정 버튼 클릭 핸들러
     onRegisterCafe?: () => void; // 카페 등록 버튼 클릭 핸들러
@@ -12,6 +13,7 @@ interface UserInfoProps {
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe }) => {
+    console.log('role:', role);
     return (
         <Paper
             sx={{
@@ -32,7 +34,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onRe
                 }}
             >
                 <Typography variant="h3" sx={{ fontWeight: 'bold', color: grey[900] }}>
-                    {name} <span style={{ fontSize: 12, color: grey[700] }}>{role}</span>
+                    {name} <span style={{ fontSize: 12, color: grey[700] }}>{ UserRole[role]}</span>
                 </Typography>
                 {onEditCafe && (
                     <Button
@@ -47,9 +49,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ name, role, email, onEditCafe, onRe
                             bgcolor: blue[300],
                             '&:hover': { bgcolor: blue[500] },
                         }}
-                        onClick={role === '카페 소유자' ? onEditCafe : onRegisterCafe}
+                        onClick={role == UserRole.ROLE_CAFE_OWNER ? onEditCafe : onRegisterCafe}
                     >
-                        {role === '카페 소유자' ? '내 카페 수정' : '카페 등록'}
+                        {role == UserRole.ROLE_CAFE_OWNER ? '내 카페 수정' : '카페 등록'}
                     </Button>
                 )}
             </Box>

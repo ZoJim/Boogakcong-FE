@@ -8,3 +8,8 @@ export const getCafeById = (id: number, token?: string | null) => {
     }
     return springApiRequest('GET', `/api/cafes/${id}`);
 };
+
+export const requestCafeRegister = (cafeId: number, token: string) => {
+    const queryString = `?cafeId=${encodeURIComponent(cafeId)}`;
+    return springApiRequest('POST', `/api/cafes/owners/request${queryString}`, token);
+};

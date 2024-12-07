@@ -4,6 +4,9 @@ import React from 'react';
 import {Box} from '@mui/material';
 import {blue} from "@mui/material/colors";
 import PostingEditor from "@/components/PostingEditor";
+import CafeRegister from "@/components/CafeRegister";
+import CafeModify from "@/components/CafeModify";
+import CafeRegisterRequest from "@/components/CafeRegisterRequest";
 
 const Page = () => {
 
@@ -19,7 +22,8 @@ const Page = () => {
                 bgcolor: blue[200],
             }}
         >
-            <PostingEditor id={0} title="" content="" userId={0} postType=c imageUrl="" createdAt="" />
+            <CafeRegisterRequest
+            ></CafeRegisterRequest>
         </Box>
     );
 };

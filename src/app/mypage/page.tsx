@@ -275,8 +275,11 @@ const Page = () => {
                     </Box>
                     <UserInfo
                         name={userInfo.name}
-                        role={UserRole[userInfo.role]}
+                        role={userInfo.role}
                         email={userInfo.email}
+                        // onEditCafe={() => router.push('/cafe/modify')}
+                        onDeleteCafe={() => router.push('/cafe/delete')}
+                        onRegisterCafe={() => router.push('/cafe/register')}
                     />
                 </Box>
             )}
