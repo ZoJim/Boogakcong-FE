@@ -6,20 +6,24 @@ import { blue } from '@mui/material/colors';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation'; // Next.js의 useRouter import
 import { login } from '@/app/api/login';
-import {accessTokenAtom, refreshTokenAtom} from "@/state/authAtom"; // 로그인 API 요청 함수
+import {accessTokenAtom, refreshTokenAtom, userIdAtom} from "@/state/authAtom";
+import {getUser} from "@/app/api/user"; // 로그인 API 요청 함수
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const setAccessToken = useSetAtom(accessTokenAtom);
     const setRefreshToken = useSetAtom(refreshTokenAtom);
+    const setUserId = useSetAtom(userIdAtom);
     const router = useRouter(); // useRouter 사용
 
     const handleLogin = async () => {
         try {
             console.log('Attempting login with email:', email);
             const userData = await login(email, password); // API call to login
+            const user = await  getUser(userData.accessToken); // 유저 정보 가져오기
             console.log('Login successful:', userData);
+            console.log('User:', user.id);
 
             // Check if accessToken and refreshToken exist
             if (!userData.accessToken || !userData.refreshToken) {
@@ -29,6 +33,9 @@ const Login = () => {
             // Save tokens
             setAccessToken(userData.accessToken);
             setRefreshToken(userData.refreshToken);
+            setUserId(user.id); // 유저 정보 저장
+            localStorage.setItem('accessToken', userData.accessToken);
+            localStorage.setItem('refreshToken', userData.refreshToken);
 
             // Navigate to main page
             router.push('/cafe');

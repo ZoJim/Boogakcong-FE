@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Backdrop, Box, Button, CardMedia, TextField, Typography} from '@mui/material';
 import {blue} from '@mui/material/colors';
 import Navigation from '@/components/Navigation';
@@ -9,8 +9,6 @@ import ShortReview from '@/components/ShortReview';
 import UserInfo from '@/components/UserInfo';
 import {getUser} from '@/app/api/user';
 import {deleteReview, getMyReview, updateReview} from '@/app/api/review';
-import {useAtomValue} from 'jotai';
-import {accessTokenAtom} from '@/state/authAtom';
 import {Posting, UserRole} from '@/types';
 import {getMyPost} from '@/app/api/post';
 import PostingViewer from '@/components/PostViewer';
@@ -19,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {useRouter} from 'next/navigation';
 
 const Page = () => {
-    const token = useAtomValue(accessTokenAtom);
+    const token = localStorage.getItem('accessToken');
     const router = useRouter();
     const [userInfo, setUserInfo] = useState<{
         name: string;
@@ -30,7 +28,7 @@ const Page = () => {
         { id: number; cafeName: string; content: string; createdAt: string }[]
     >([]);
     const [posts, setPosts] = useState<
-        { id: number; title: string; content: string; createdAt: string; imageUrl: string }[]
+        { id: number; title: string; content: string; createdAt: string; imageUrl: string; userId: number}[]
     >([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -68,7 +66,11 @@ const Page = () => {
     const [isRedirecting, setIsRedirecting] = useState(false);
 
     const handle403Error = () => {
-        if (!isRedirecting) {
+        const storedAccessToken = localStorage.getItem('accessToken');
+        const storedRefreshToken = localStorage.getItem('refreshToken');
+
+
+        if (!isRedirecting && !storedAccessToken && !storedRefreshToken) {
             setIsRedirecting(true);
             toast.error('로그인이 필요합니다.', {
                 position: 'top-center',
@@ -166,6 +168,7 @@ const Page = () => {
                     content: post.content,
                     createdAt: post.createdAt,
                     imageUrl: post.imageUrl,
+                    userId: post.userId
                 }))
             );
         } catch (err: any) {
@@ -272,10 +275,12 @@ const Page = () => {
                                 sx={{
                                 }}
                             >
-                                <PostingList
+                                < PostingList
                                     title={post.title}
                                     content={post.content}
                                     createdAt={post.createdAt}
+                                    userId={post.userId}
+                                    id={post.id}
                                     imageUrl={post.imageUrl}
                                     onClick={() => openPostingModal(post)}
                                 />
@@ -327,7 +332,16 @@ const Page = () => {
                         }}
                         onClick={(e) => e.stopPropagation()} // 클릭 이벤트 전파 방지
                     >
-                        <PostingViewer {...selectedPosting} />
+                        <PostingViewer
+                            id={selectedPosting.id}
+                            title={selectedPosting.title}
+                            content={selectedPosting.content}
+                            userId={selectedPosting.userId}
+                            postType={selectedPosting.postType}
+                            imageUrl={selectedPosting.imageUrl}
+                            createdAt={selectedPosting.createdAt}
+
+                        />
                     </Box>
                 )}
             </Backdrop>

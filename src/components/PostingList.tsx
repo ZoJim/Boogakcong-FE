@@ -5,6 +5,7 @@ interface PostingListProps {
     content: string;
     createdAt: string;
     imageUrl: string;
+    userId: number;
     onClick?: () => void;
 }
 
@@ -22,7 +23,7 @@ const truncateText = (text: string | null | undefined, maxLength: number): strin
     if (!text) return "";
     return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
-const PostingList = ({ title, content, createdAt, imageUrl, onClick }: PostingListProps) => {
+const PostingList = ({ title, content, createdAt, imageUrl, onClick, userId }: PostingListProps) => {
     return (
         <Card
             onClick={onClick}

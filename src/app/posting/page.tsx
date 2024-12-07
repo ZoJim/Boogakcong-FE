@@ -173,6 +173,7 @@ const Page = () => {
                                     title={posting.title}
                                     content={posting.content}
                                     createdAt={posting.createdAt}
+                                    userId={posting.userId}
                                     imageUrl={posting.imageUrl}
                                 />
                             </Box>

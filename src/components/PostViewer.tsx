@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Card, CardMedia, Box, Button, Typography } from '@mui/material';
-import { PostType } from "@/types";
+import {PostType, UserRole} from "@/types";
 import {blue} from "@mui/material/colors";
+import {useAtomValue} from "jotai/index";
+import {userIdAtom} from "@/state/authAtom";
 
 interface PostingViewerProps {
     id: number;
@@ -14,6 +16,11 @@ interface PostingViewerProps {
 }
 
 const PostingViewer = ({ id, title, content, userId, postType, imageUrl, createdAt }: PostingViewerProps) => {
+
+    const atomUserId = useAtomValue(userIdAtom);
+    console.log('atomUserId:', atomUserId);
+    console.log('userId:', userId);
+
     return (
         <Card
             sx={{
@@ -115,6 +122,26 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
                     {content}
                 </Typography>
             </Box>
+
+        {/*    내 글일 경우 수정 버튼*/}
+            {atomUserId === userId && (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                        borderRadius: '10px',
+                        paddingX: 4,
+                        paddingY: 1,
+                        color: '#FFFFFF',
+                        backgroundColor: '#2196F3',
+                        '&:hover': {
+                            backgroundColor: '#1976D2',
+                        },
+                    }}
+                >
+                    수정
+                </Button>
+            )}
         </Card>
     );
 };
