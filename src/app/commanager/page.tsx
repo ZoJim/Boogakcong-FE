@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, TextField, IconButton, Button } from '@mui/material';
+import { Box, Typography, TextField, IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import UserInfo from '@/components/UserInfo';
-import {deleteUser, getUserList} from "@/app/api/user"; // Import getUserList API
+import { deleteUser, getUserList } from "@/app/api/user"; // Import deleteUser API
 import { toast } from 'react-toastify';
 import CafeRegister from "@/components/CafeRegister";
 import DeleteInfo from "@/components/DeleteInfo";
@@ -17,6 +17,8 @@ const Page = () => {
     const [filteredUserList, setFilteredUserList] = useState<any[]>([]); // State for filtered users
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState(''); // State to store search query
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State to handle delete dialog visibility
+    const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null); // Store user id to delete
 
     // Fetch user list
     const fetchUserList = async () => {
@@ -32,22 +34,6 @@ const Page = () => {
             toast.error('사용자 목록을 불러오는 데 실패했습니다.');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleDelete = async (userId: number) => {
-        if (!token) return;
-
-        try {
-            await deleteUser(userId, token); // Call API to delete the user
-            toast.success('사용자가 삭제되었습니다.');
-
-            // Remove deleted user from both lists
-            setUserList(userList.filter(user => user.id !== userId));
-            setFilteredUserList(filteredUserList.filter(user => user.id !== userId));
-        } catch (error) {
-            console.error('사용자 삭제에 실패했습니다:', error);
-            toast.error('사용자 삭제에 실패했습니다.');
         }
     };
 
@@ -71,6 +57,36 @@ const Page = () => {
             user.id.toString().includes(query) // Filter by user id (convert to string for partial match)
         );
         setFilteredUserList(filtered); // Update the filtered list only
+    };
+
+    // Open delete dialog
+    const handleOpenDeleteDialog = (userId: number) => {
+        setUserIdToDelete(userId);
+        setOpenDeleteDialog(true); // Open the delete confirmation dialog
+    };
+
+    // Close delete dialog
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false); // Close the delete confirmation dialog
+        setUserIdToDelete(null);
+    };
+
+    // Handle delete user
+    const handleDelete = async () => {
+        if (!token || userIdToDelete === null) return;
+
+        try {
+            await deleteUser(userIdToDelete, token); // Call API to delete the user
+            toast.success('사용자가 삭제되었습니다.');
+
+            // Remove deleted user from both lists
+            setUserList(userList.filter(user => user.id !== userIdToDelete));
+            setFilteredUserList(filteredUserList.filter(user => user.id !== userIdToDelete));
+            handleCloseDeleteDialog(); // Close the dialog after successful deletion
+        } catch (error) {
+            console.error('사용자 삭제에 실패했습니다:', error);
+            toast.error('사용자 삭제에 실패했습니다.');
+        }
     };
 
     return (
@@ -170,7 +186,7 @@ const Page = () => {
                                         color="error"
                                         size="small"
                                         sx={{ marginLeft: -10, bgcolor: 'white' }}
-                                        onClick={() => handleDelete(user.id)}
+                                        onClick={() => handleOpenDeleteDialog(user.id)} // Open delete confirmation dialog
                                     >
                                         삭제
                                     </Button>
@@ -251,6 +267,27 @@ const Page = () => {
                     </Box>
                 ))}
             </Box>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog
+                open={openDeleteDialog}
+                onClose={handleCloseDeleteDialog}
+            >
+                <DialogTitle>삭제 확인</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        정말로 이 사용자를 삭제하시겠습니까?
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog} color="primary">
+                        취소
+                    </Button>
+                    <Button onClick={handleDelete} color="error">
+                        삭제
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };
