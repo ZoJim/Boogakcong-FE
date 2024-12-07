@@ -10,12 +10,7 @@ const Page = () => {
   const pData = [30, 50, 70, 90, 110, 130, 140]; // 신규 카페 & 게시글
   const uData = [20, 40, 60, 80, 90, 100, 120]; // 신규 카페 & 후기글
   const xLabels = ['월', '화', '수', '목', '금' ,'토', '일']; // X축 레이블
-
-  // 승인 처리 함수
-  const handleApprove = (id: string) => {
-    console.log(`등록 요청 승인: ${id}`);
-    alert(`등록 요청이 승인되었습니다. (ID: ${id})`);
-  };
+  
 
   return (
     <Box
