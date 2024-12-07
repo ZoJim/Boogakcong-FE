@@ -277,7 +277,7 @@ const Page = () => {
                         name={userInfo.name}
                         role={userInfo.role}
                         email={userInfo.email}
-                        // onEditCafe={() => router.push('/cafe/modify')}
+                        onEditCafe={() => router.push('/cafe/modify')}
                         onDeleteCafe={() => router.push('/cafe/delete')}
                         onRegisterCafe={() => router.push('/cafe/register')}
                     />
