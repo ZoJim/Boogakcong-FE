@@ -4,6 +4,7 @@ import {PostType, UserRole} from "@/types";
 import {blue} from "@mui/material/colors";
 import {useAtomValue} from "jotai/index";
 import {userIdAtom} from "@/state/authAtom";
+import PostingEditor from "@/components/PostingEditor";
 
 interface PostingViewerProps {
     id: number;
@@ -13,13 +14,40 @@ interface PostingViewerProps {
     postType: PostType;
     imageUrl: string;
     createdAt: string;
+    onUpdate: (id: number, title: string, content: string, image: File | string | null) => void
 }
 
-const PostingViewer = ({ id, title, content, userId, postType, imageUrl, createdAt }: PostingViewerProps) => {
-
+const PostingViewer = ({ id, title, content, userId, postType, imageUrl, createdAt, onUpdate}: PostingViewerProps) => {
     const atomUserId = useAtomValue(userIdAtom);
-    console.log('atomUserId:', atomUserId);
-    console.log('userId:', userId);
+    const [isEditing, setIsEditing] = useState(false); // 에디터 모드 상태
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+    };
+
+    const handleSave = (updatedTitle: string, updatedContent: string, updatedImage: File | string | null) => {
+        onUpdate(id, updatedTitle, updatedContent, updatedImage); // 업데이트 콜백 호출
+        setIsEditing(false); // 에디터 모드 종료
+    };
+
+    if (isEditing) {
+        return (
+            <PostingEditor
+                id={id}
+                title={title}
+                content={content}
+                imageUrl={imageUrl}
+                isEditMode={true}
+                onSave={handleSave}
+                onCancel={handleCancel}
+                postType={postType}
+            />
+        );
+    }
 
     return (
         <Card
@@ -133,11 +161,12 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
                         paddingX: 4,
                         paddingY: 1,
                         color: '#FFFFFF',
-                        backgroundColor: '#2196F3',
+                        backgroundColor: blue[200],
                         '&:hover': {
                             backgroundColor: '#1976D2',
                         },
                     }}
+                    onClick={handleEditClick}
                 >
                     수정
                 </Button>

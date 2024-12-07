@@ -7,5 +7,3 @@ export const getMyReview = (token: string) => springApiRequest('GET', '/api/cafe
 export const updateReview = (token: string, reviewId: number, content: string) => springApiRequest('PATCH', `/api/cafes/review`, token, { reviewId ,content });
 
 export const deleteReview = (token: string, reviewId: number) => springApiRequest('DELETE', `/api/cafes/review/${reviewId}`, token);
-
-export const fetchReivew = (token: string, cafeId: number, content: string) => springApiRequest('PATCH', `/api/cafes/review`, token, { cafeId, content });

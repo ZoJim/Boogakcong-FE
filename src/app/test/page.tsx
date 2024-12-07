@@ -3,7 +3,7 @@
 import React from 'react';
 import {Box} from '@mui/material';
 import {blue} from "@mui/material/colors";
-import Login from "@/components/Login";
+import PostingEditor from "@/components/PostingEditor";
 
 const Page = () => {
 
@@ -19,9 +19,7 @@ const Page = () => {
                 bgcolor: blue[200],
             }}
         >
-            <Login>
-
-            </Login>
+            <PostingEditor id={0} title="" content="" userId={0} postType=c imageUrl="" createdAt="" />
         </Box>
     );
 };

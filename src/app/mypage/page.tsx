@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {useRouter} from 'next/navigation';
 
 const Page = () => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken") || null;
     const router = useRouter();
     const [userInfo, setUserInfo] = useState<{
         name: string;
@@ -168,7 +168,8 @@ const Page = () => {
                     content: post.content,
                     createdAt: post.createdAt,
                     imageUrl: post.imageUrl,
-                    userId: post.userId
+                    userId: post.userId,
+                    postType: post.postType,
                 }))
             );
         } catch (err: any) {
@@ -199,7 +200,7 @@ const Page = () => {
                 justifyContent: 'center',
                 height: '100vh',
                 width: '100vw',
-                bgcolor: blue[200],
+                backgroundColor: blue[200],
             }}
         >
             <ToastContainer />
@@ -275,7 +276,7 @@ const Page = () => {
                                 sx={{
                                 }}
                             >
-                                < PostingList
+                                <PostingList
                                     title={post.title}
                                     content={post.content}
                                     createdAt={post.createdAt}
@@ -340,7 +341,7 @@ const Page = () => {
                             postType={selectedPosting.postType}
                             imageUrl={selectedPosting.imageUrl}
                             createdAt={selectedPosting.createdAt}
-
+                            // onUpdate={}
                         />
                     </Box>
                 )}
