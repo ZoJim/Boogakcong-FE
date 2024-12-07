@@ -5,6 +5,7 @@ import { UserRole } from "@/types";
 import { getCafeStatus } from "@/app/api/user";
 import CafeRegister from './CafeRegister';
 import CafeRegisterRequest from "@/components/CafeRegisterRequest";
+import CafeModify from "@/components/CafeModify";
 
 interface UserInfoProps {
     name: string;
@@ -28,7 +29,8 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
         cafeId: number | null;
     }>({ allocationStatus: null, cafeId: null });
 
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태
+    const [isModalOpen, setIsModalOpen] = useState(false); // 카페 등록 모달 열림/닫힘 상태
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 카페 수정 모달 열림/닫힘 상태
 
     useEffect(() => {
         const fetchCafeStatus = async () => {
@@ -82,7 +84,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                         bgcolor: blue[300],
                         '&:hover': { bgcolor: blue[500] },
                     }}
-                    onClick={onEditCafe}
+                    onClick={() => setIsEditModalOpen(true)} // 카페 수정 모달 열기
                 >
                     내 카페 수정
                 </Button>
@@ -103,7 +105,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                         bgcolor: blue[300],
                         '&:hover': { bgcolor: blue[500] },
                     }}
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => setIsModalOpen(true)} // 카페 등록 모달 열기
                 >
                     카페 등록
                 </Button>
@@ -186,6 +188,32 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                     }}
                 >
                     <CafeRegisterRequest />
+                </Box>
+            </Modal>
+
+            {/* 카페 수정 모달 */}
+            <Modal
+                open={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)} // 수정 모달 닫기
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                    style: { backgroundColor: 'rgba(0, 0, 0, 0.6)' },
+                }}
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'white',
+                        borderRadius: 8,
+                    }}
+                >
+                    {/* 카페 수정 컴포넌트 */}
+                    <CafeModify /> {/* 여기에 카페 수정 컴포넌트를 삽입 */}
                 </Box>
             </Modal>
         </>

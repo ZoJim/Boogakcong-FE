@@ -10,6 +10,7 @@ import {
     Card,
 } from "@mui/material";
 import {blue, grey} from "@mui/material/colors";
+import KakaoMap from "@/components/KakaoMap";
 
 const CafeModify = () => {
     const [notice, setNotice] = useState(""); // 공지사항 입력
@@ -63,37 +64,17 @@ const CafeModify = () => {
                     유일무이 카페
                 </Typography>
 
-                {/* 지도 */}
-                {/*<Box*/}
-                {/*    sx={{*/}
-                {/*        width: "100%",*/}
-                {/*        height: 150,*/}
-                {/*        backgroundColor: grey[200],*/}
-                {/*        borderRadius: 2,*/}
-                {/*        mb: 2,*/}
-                {/*        backgroundImage: "url('/images/map-placeholder.png')",*/}
-                {/*        backgroundSize: "cover",*/}
-                {/*        backgroundPosition: "center",*/}
-                {/*    }}*/}
-                {/*>*/}
-                    {/*<Box*/}
-                    {/*    sx={{*/}
-                    {/*        display: "flex",*/}
-                    {/*        justifyContent: "center",*/}
-                    {/*        alignItems: "center",*/}
-                    {/*        height: "100%",*/}
-                    {/*    }}*/}
-                    {/*>*/}
-                    {/*    <img*/}
-                    {/*        src="/images/map.png"*/}
-                    {/*        alt="지도 아이콘"*/}
-                    {/*        style={{width: 50, height: 50}}*/}
-                    {/*    />*/}
-                    {/*</Box>*/}
-                {/*</Box>*/}
+                {/* 카카오맵 */}
+                <Box sx={{width: "100%", height: 200, marginBottom: 2}}>
+                    <KakaoMap initialLon={127.108622} initialLat={37.401219} level={3} mapId={1}/>
+                </Box>
 
                 {/* 공지사항 */}
-                <Box sx={{width: "100%", marginBottom: 4}}>
+                <Box sx={{
+                    width: '100%',
+                    height: 200,
+                    marginBottom: 2,
+                }}>
                     <TextField
                         id="notification"
                         label="공지사항"
