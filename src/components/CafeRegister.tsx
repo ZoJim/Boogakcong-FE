@@ -1,13 +1,14 @@
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { blue } from '@mui/material/colors';
+import CafeRegisterRequest from "@/components/CafeRegisterRequest";
 
 interface CafeRegisterProps {
   requestId: string; // 요청 ID
   onApprove?: () => void; // 승인 버튼 클릭 핸들러 (선택적)
 }
 
-const CafeRegister: React.FC<CafeRegisterProps> = ({ requestId, onApprove }) => {
+const CafeRegister = ({ requestId, onApprove }:CafeRegisterProps) => {
   const handleApprove = () => {
     if (onApprove) {
       onApprove();
@@ -22,9 +23,9 @@ const CafeRegister: React.FC<CafeRegisterProps> = ({ requestId, onApprove }) => 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+          width:'350px',
         borderRadius: 2,
         p: 1,
-        bgcolor: 'white',
         boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
         mb: 1,
       }}
