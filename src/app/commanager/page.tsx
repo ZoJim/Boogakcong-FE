@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Typography, TextField, Button, IconButton} from '@mui/material';
 import {blue, grey} from '@mui/material/colors';
 import UserInfo from '@/components/UserInfo';
@@ -8,8 +8,34 @@ import ShortReview from '@/components/ShortReview';
 import PostingList from '@/components/PostingList';
 import DeleteInfo from '@/components/DeleteInfo'; // DeleteInfo 컴포넌트 import 추가
 import CafeRegister from '@/components/CafeRegister';
+import {toast} from "react-toastify";
+import {getUserList} from "@/app/api/user";
 
 const Page = () => {
+    const token = localStorage.getItem('accessToken') || null;
+    const [userList, setUserList] = useState<any[]>([]); // State to store the list of users
+    const [loading, setLoading] = useState(false);
+
+    // Fetch user list
+    const fetchUserList = async () => {
+        if (!token) return; // If no token, do not fetch
+        setLoading(true);
+        try {
+            const users = await getUserList(token); // Get the list of users from API
+            setUserList(users);
+            toast.success('사용자 목록을 성공적으로 불러왔습니다.');
+        } catch (error) {
+            console.error('사용자 목록을 불러오는 데 실패했습니다:', error);
+            toast.error('사용자 목록을 불러오는 데 실패했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserList();
+    }, [token]);
+
     const handleApprove = (requestId: string) => {
         console.log(`${requestId} has been approved.`);
         alert(`${requestId} 등록 요청이 승인되었습니다.`);
@@ -98,36 +124,83 @@ const Page = () => {
                         </Box>
 
                         {/* 회원 정보 & 삭제 버튼 */}
-                        {[1, 2].map((id) => (
-                            <Box
-                                key={id}
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    p: 0,
-                                    mb: 6,
-                                }}
-                            >
-                                <Box sx={{marginBottom: -5}}>
-                                    <UserInfo
-                                        name="홍길동"
-                                        role="카페 소유자"
-                                        email="gildong@gmail.com"
-                                        onEditCafe={undefined} // 버튼 안보이게
-                                        onDeleteCafe={undefined} // 버튼 안보이게
-                                    />
-                                </Box>
-                                <Button
-                                    variant="outlined"
-                                    color="error"
-                                    size="small"
-                                    sx={{marginLeft: -10, bgcolor: 'white'}}
-                                >
-                                    삭제
-                                </Button>
-                            </Box>
-                        ))}
+                        {loading ? (
+                            <Typography variant="h6" sx={{color: 'white'}}>로딩 중...</Typography>
+                        ) : (
+                            <Box sx={{
+                                width: '100%',
+                                height: '300px',
+                                overflowY:'auto',
+                                overflowX: 'hidden'
+
+                            }}>
+                                {userList.length > 0 ? (
+                                    userList.map((user, index) => (
+                                        <Box
+                                            key={user.id || index}
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                p: 0,
+                                                mb: 6,
+                                            }}
+                                        >
+                                            <UserInfo
+                                                name={user.name}
+                                                role={user.role}
+                                                email={user.email}
+                                                onEditCafe={() => {
+                                                }} // Add your edit logic if needed
+                                                onDeleteCafe={() => {
+                                                }} // Add your delete logic if needed
+                                                isConsole = {true}
+                                            />
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                size="small"
+                                                sx={{marginLeft: -10, bgcolor: 'white'}}
+                                            >
+                                                삭제
+                                            </Button>
+                                        </Box>
+                                    ))
+                                ) : (
+                                    <Typography variant="h6" sx={{color: 'white'}}>사용자가 없습니다.</Typography>
+                                )}</Box>
+                        )}
+
+                        {/*{[1, 2].map((id) => (*/}
+                        {/*    <Box*/}
+                        {/*        key={id}*/}
+                        {/*        sx={{*/}
+                        {/*            display: 'flex',*/}
+                        {/*            justifyContent: 'space-between',*/}
+                        {/*            alignItems: 'center',*/}
+                        {/*            p: 0,*/}
+                        {/*            mb: 6,*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <Box sx={{marginBottom: -5}}>*/}
+                        {/*            <UserInfo*/}
+                        {/*                name="홍길동"*/}
+                        {/*                role="카페 소유자"*/}
+                        {/*                email="gildong@gmail.com"*/}
+                        {/*                onEditCafe={undefined} // 버튼 안보이게*/}
+                        {/*                onDeleteCafe={undefined} // 버튼 안보이게*/}
+                        {/*            />*/}
+                        {/*        </Box>*/}
+                        {/*        <Button*/}
+                        {/*            variant="outlined"*/}
+                        {/*            color="error"*/}
+                        {/*            size="small"*/}
+                        {/*            sx={{marginLeft: -10, bgcolor: 'white'}}*/}
+                        {/*        >*/}
+                        {/*            삭제*/}
+                        {/*        </Button>*/}
+                        {/*    </Box>*/}
+                        {/*))}*/}
                     </Box>
                 </Box>
 

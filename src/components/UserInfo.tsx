@@ -14,6 +14,7 @@ interface UserInfoProps {
     onEditCafe?: () => void; // 내 카페 수정 버튼 클릭 핸들러
     onRegisterCafe?: () => void; // 카페 등록 버튼 클릭 핸들러
     onDeleteCafe?: () => void; // 카페 삭제 요청 클릭 핸들러
+    isConsole ?: boolean;
 }
 
 enum AllocationStatus {
@@ -22,7 +23,7 @@ enum AllocationStatus {
     REQUESTED = "REQUESTED"
 }
 
-const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe }: UserInfoProps) => {
+const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe, isConsole }: UserInfoProps) => {
     const token = localStorage.getItem("accessToken") || "";
     const [cafeStatus, setCafeStatus] = useState<{
         allocationStatus: AllocationStatus | null;
@@ -51,6 +52,10 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
     }, [token]);
 
     const renderActionButton = () => {
+        if (isConsole) {
+            return null;
+        }
+
         if (cafeStatus.allocationStatus === AllocationStatus.REQUESTED) {
             return (
                 <Button
