@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, Paper, Backdrop, Modal } from '@mui/material';
-import { blue, grey } from '@mui/material/colors';
-import { UserRole } from "@/types";
-import { getCafeStatus } from "@/app/api/user";
-import CafeRegister from './CafeRegister';
+import React, {useEffect, useState} from 'react';
+import {Backdrop, Box, Button, Modal, Paper, Typography} from '@mui/material';
+import {blue, grey} from '@mui/material/colors';
+import {UserRole} from "@/types";
+import {getCafeStatus} from "@/app/api/user";
 import CafeRegisterRequest from "@/components/CafeRegisterRequest";
 import CafeModify from "@/components/CafeModify";
 
@@ -213,7 +212,7 @@ const UserInfo = ({ name, role, email, onEditCafe, onRegisterCafe, onDeleteCafe 
                     }}
                 >
                     {/* 카페 수정 컴포넌트 */}
-                    <CafeModify /> {/* 여기에 카페 수정 컴포넌트를 삽입 */}
+                    <CafeModify cafeId={cafeStatus.cafeId as number}/> {/* 여기에 카페 수정 컴포넌트를 삽입 */}
                 </Box>
             </Modal>
         </>
