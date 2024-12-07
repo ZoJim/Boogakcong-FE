@@ -92,7 +92,7 @@ const Page = () => {
             );
             setIsReviewModalOpen(false);
         } catch (err) {
-            console.error('Error updating review:', err);
+            console.log('Error updating review:', err);
         }
     };
 
@@ -149,7 +149,7 @@ const Page = () => {
             if (err.response?.status === 403) {
                 handle403Error();
             } else {
-                console.error('Error fetching my reviews:', err);
+                console.log('Error fetching my reviews:', err);
             }
         }
     };
@@ -259,7 +259,10 @@ const Page = () => {
                         flexDirection: 'column',
                         gap: 2,
                         maxHeight: '400px',
+                        maxWidth: '360',
                         overflowY: 'auto',
+                        overflowX: 'hidden',
+                        alignItems: 'center'
                     }}
                 >
                     {posts.length > 0 ? (
@@ -267,7 +270,6 @@ const Page = () => {
                             <Box
                                 key={post.id}
                                 sx={{
-                                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
                                 }}
                             >
                                 <PostingList
