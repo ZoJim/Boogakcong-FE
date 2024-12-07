@@ -27,3 +27,9 @@ export const updateCafeDetail = (token: string,
         }
     );
 }
+
+export const deleteCafe = (reason: number, token: string) => {
+    const queryString = `?reasonId=${encodeURIComponent(reason)}`;
+
+    return springApiRequest('DELETE', `/api/cafes/owners/request${queryString}`, token, );
+}
