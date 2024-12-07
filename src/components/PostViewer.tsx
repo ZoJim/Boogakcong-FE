@@ -5,6 +5,8 @@ import {blue} from "@mui/material/colors";
 import {useAtomValue} from "jotai/index";
 import {userIdAtom} from "@/state/authAtom";
 import PostingEditor from "@/components/PostingEditor";
+import {deletePost} from "@/app/api/post";
+import {toast} from "react-toastify";
 
 interface PostingViewerProps {
     id: number;
@@ -51,6 +53,20 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
             />
         );
     }
+
+    const handleDelete = async () => {
+        if (!window.confirm("정말로 삭제하시겠습니까?")) {
+            return;
+        }
+        try {
+            await deletePost(id, token); // deletePost는 서버 삭제 API 호출 함수
+            toast.success("게시글이 삭제되었습니다.");
+            window.location.reload();
+        } catch (error) {
+            console.error("게시글 삭제 중 오류 발생:", error);
+            toast.error("게시글 삭제 중 문제가 발생했습니다.");
+        }
+    };
 
     return (
         <Card
@@ -156,23 +172,43 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
 
         {/*    내 글일 경우 수정 버튼*/}
             {atomUserId == userId && (
-                <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                        borderRadius: '10px',
-                        paddingX: 4,
-                        paddingY: 1,
-                        color: '#FFFFFF',
-                        backgroundColor: blue[200],
-                        '&:hover': {
-                            backgroundColor: '#1976D2',
-                        },
-                    }}
-                    onClick={handleEditClick}
-                >
-                    수정
-                </Button>
+                <>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{
+                            borderRadius: '10px',
+                            paddingX: 4,
+                            paddingY: 1,
+                            color: '#FFFFFF',
+                            backgroundColor: blue[200],
+                            '&:hover': {
+                                backgroundColor: '#1976D2',
+                            },
+                            marginRight: 1,
+                        }}
+                        onClick={handleEditClick}
+                    >
+                        수정
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        sx={{
+                            borderRadius: '10px',
+                            paddingX: 4,
+                            paddingY: 1,
+                            color: '#FFFFFF',
+                            backgroundColor: blue[300],
+                            '&:hover': {
+                                backgroundColor: '#D32F2F',
+                            },
+                        }}
+                        onClick={handleDelete} // 삭제 이벤트 핸들러
+                    >
+                        삭제
+                    </Button>
+                </>
             )}
         </Card>
     );
