@@ -14,7 +14,7 @@ interface PostingViewerProps {
     postType: PostType;
     imageUrl: string;
     createdAt: string;
-    onUpdate: (id: number, title: string, content: string, image: File | string | null) => void
+    onUpdate: (id: number, title: string, content: string, image: File | string | null, postType) => void
 }
 
 const PostingViewer = ({ id, title, content, userId, postType, imageUrl, createdAt, onUpdate}: PostingViewerProps) => {
@@ -30,7 +30,7 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
     };
 
     const handleSave = (updatedTitle: string, updatedContent: string, updatedImage: File | string | null) => {
-        onUpdate(id, updatedTitle, updatedContent, updatedImage); // 업데이트 콜백 호출
+        onUpdate(id, updatedTitle, updatedContent, updatedImage, postType); // 업데이트 콜백 호출
         setIsEditing(false); // 에디터 모드 종료
     };
 

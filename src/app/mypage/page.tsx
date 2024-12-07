@@ -9,8 +9,8 @@ import ShortReview from '@/components/ShortReview';
 import UserInfo from '@/components/UserInfo';
 import {getUser} from '@/app/api/user';
 import {deleteReview, getMyReview, updateReview} from '@/app/api/review';
-import {Posting, UserRole} from '@/types';
-import {getMyPost} from '@/app/api/post';
+import {Posting, PostType, UserRole} from '@/types';
+import {getMyPost, patchPost} from '@/app/api/post';
 import PostingViewer from '@/components/PostViewer';
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -107,6 +107,40 @@ const Page = () => {
             setIsReviewModalOpen(false);
         } catch (err) {
             console.error('Error deleting review:', err);
+        }
+    };
+
+    const handlePostUpdate = async (id: number, updatedTitle: string, updatedContent: string, updatedImage: File | string | null, postType:PostType) => {
+        try {
+            if (!token) {
+                console.error("로그인이 필요합니다.");
+                return;
+            }
+
+            // 수정된 데이터를 서버에 저장
+            await patchPost(id, updatedTitle, updatedContent, updatedImage, postType, token);
+
+            // 클라이언트 상태 업데이트
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>
+                    post.id === id
+                        ? { ...post, title: updatedTitle, content: updatedContent, imageUrl: updatedImage as string }
+                        : post
+                )
+            );
+
+            toast.success("게시글이 성공적으로 수정되었습니다.");
+        } catch (error) {
+            console.error("게시글 수정 중 오류 발생:", error);
+            console.log(
+                "id:", id,
+                "updatedTitle:", updatedTitle,
+                "updatedContent:", updatedContent,
+                "updatedImage:", updatedImage,
+                "postType:", postType,
+                "token:", token
+            )
+            toast.error("게시글 수정 중 문제가 발생했습니다.");
         }
     };
 
@@ -341,7 +375,7 @@ const Page = () => {
                             postType={selectedPosting.postType}
                             imageUrl={selectedPosting.imageUrl}
                             createdAt={selectedPosting.createdAt}
-                            // onUpdate={}
+                            onUpdate={handlePostUpdate}
                         />
                     </Box>
                 )}

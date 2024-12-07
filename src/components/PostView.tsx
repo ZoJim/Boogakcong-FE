@@ -69,7 +69,7 @@ const PostView: React.FC<PostViewProps> = ({ title, content, image }) => {
                             paddingX: 1,
                             paddingY: 0.7,
                             borderColor: '#2196F3', // 외곽선 색상
-                            color: '#2196F3', // 텍스트 색상
+                            color: '#FFFFFF', // 텍스트 색상
                             '&:hover': {
                                 backgroundColor: '#BBDEFB', // hover 효과, #BBDEFB = BLUE/100
                                 borderColor: '#2196F3', // #2196F3 = BLUE/500

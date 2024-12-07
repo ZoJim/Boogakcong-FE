@@ -46,20 +46,6 @@ const PostingEditor = ({
         }
     };
 
-    // const handleSave = async () => {
-    //     try {
-    //         // API 호출
-    //         await patchPost(id!!, updatedTitle!!, updatedContent!!, image, postType, token!!);
-    //         // 상위 컴포넌트에 저장된 데이터 전달
-    //         onSave(updatedTitle, updatedContent, image || preview);
-    //         // 성공적으로 완료 후 Modal 닫기
-    //         onCancel();
-    //     } catch (error) {
-    //         console.error("Error while updating post:", error);
-    //         alert("게시글 수정 중 문제가 발생했습니다. 다시 시도해주세요.");
-    //     }
-    // };
-
     const handleSave = async () => {
         if (!id || !token || !postType) {
             console.error("필수 값(id, token, postType)이 누락되었습니다.", { id, token, postType });
