@@ -50,3 +50,5 @@ export const approveCafeRegisterRequest = (token: string, requestId: number) => 
     const queryString = `?requestId=${encodeURIComponent(requestId)}&accept=true`;
     return springApiRequest('POST', `/api/cafes/owners/accept${queryString}`, token);
 }
+
+export const analyzeCafeCount = (token: string) => springApiRequest('GET', '/api/cafes/analysis', token);

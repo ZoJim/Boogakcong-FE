@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button, IconButton } from '@mui/material';
 import { blue, grey } from '@mui/material/colors';
 import { PieChart, BarChart, LineChart } from '@mui/x-charts';
-import {analyzeUser} from "@/app/api/user";
+import { analyzeUser } from "@/app/api/user";
+import { analyzeCafeCount } from "@/app/api/cafe"; // 새로운 API 호출 함수
 
 const Page = () => {
     const token = localStorage.getItem('accessToken') || null;
@@ -15,6 +16,8 @@ const Page = () => {
         communityManagerCount: 0,
         totalMemberCount: 0,
     });
+
+    const [cafeStats, setCafeStats] = useState<any[]>([]); // 카페 통계
 
     // API 호출하여 회원 통계 데이터를 받아오는 함수
     useEffect(() => {
@@ -27,9 +30,31 @@ const Page = () => {
         }
     }, [token]);
 
-    const pData = [30, 50, 70, 90, 110, 130, 140]; // 신규 카페 & 게시글
-    const uData = [20, 40, 60, 80, 90, 100, 120]; // 신규 카페 & 후기글
-    const xLabels = ['월', '화', '수', '목', '금' ,'토', '일']; // X축 레이블
+    // 카페 통계 데이터 받아오기
+    useEffect(() => {
+        if (token) {
+            analyzeCafeCount(token).then(response => {
+                // 최근 7일간 카페 데이터 가공
+                const cafeData = response.reverse(); // 최근부터 오므로 역순으로 변경
+                setCafeStats(cafeData);
+            }).catch(error => {
+                console.error('카페 분석 데이터를 불러오는 데 실패했습니다:', error);
+            });
+        }
+    }, [token]);
+
+    const pData = cafeStats.map(stat => stat.newCafeCount); // 신규 카페 수
+    const uData = cafeStats.map(stat => stat.totalCafeCount); // 전체 카페 수
+    // 오늘 날짜를 기준으로 X축 레이블 계산
+    const getDayLabel = (offset: number) => {
+        const today = new Date();
+        today.setDate(today.getDate() - offset); // 오늘 날짜에서 오프셋만큼 빼기
+        const options: Intl.DateTimeFormatOptions = { weekday: 'short' };
+        return today.toLocaleDateString('ko-KR', options); // 요일을 한글로 반환
+    };
+
+    const xLabels = Array.from({ length: 7 }, (_, i) => getDayLabel(6 - i)); // 7일간의 날짜 레이블 (역순으로)
+
 
     // PieChart 데이터 업데이트
     const pieData = [
@@ -123,7 +148,7 @@ const Page = () => {
                     height={300}
                     series={[
                         { data: pData, label: '신규 카페', color: '#0D47A1', id: 'pvId', stack: 'total' },
-                        { data: uData, label: '기존 카페', color: '#1E88E5', id: 'uvId', stack: 'total' },
+                        { data: uData, label: '전체 카페', color: '#1E88E5', id: 'uvId', stack: 'total' },
                     ]}
                     xAxis={[{ data: xLabels, scaleType: 'band' }]}
                 />
