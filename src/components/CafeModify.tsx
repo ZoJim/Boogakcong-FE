@@ -103,9 +103,9 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                     alignItems: "center",
                     justifyContent: "center",
                     p: 3,
-                    borderRadius: 5,
-                    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                    borderRadius: 8,
                     width: 350,
+                    boxShadow: "none", // 그림자 없애기
                 }}
             >
                 {/* 제목 */}
@@ -127,7 +127,7 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                 </Box>
 
                 {/* 공지사항 */}
-                <Box sx={{ width: "100%", height: 200, marginBottom: 2 }}>
+                <Box sx={{ width: "100%", marginBottom: 2 }}>
                     <TextField
                         id="notification"
                         label="공지사항"
@@ -148,6 +148,7 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                         alignItems: "center",
                         width: "100%",
                         mb: 2,
+                        boxShadow: "none", // 불필요한 그림자 제거
                     }}
                 >
                     {/* 와이파이 유무 */}
@@ -170,6 +171,7 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
+                            boxShadow: "none", // 불필요한 그림자 제거
                         }}
                     >
                         <TextField
@@ -200,7 +202,8 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                 sx={{
                     display: "flex",
                     justifyContent: "center",
-                    marginTop: 2,
+                    padding: 0,   // 불필요한 패딩 제거
+                    mb: 2,       // margin-bottom
                 }}
             >
                 <Button
@@ -208,11 +211,12 @@ const CafeModify = ({ cafeId }: CafeModifyProps) => {
                     color="primary"
                     onClick={handleSubmit}
                     sx={{
-                        borderRadius: "10px",
+                        borderRadius: "8px",
                         paddingX: 4,
                         paddingY: 1,
                         color: "#FFFFFF",
                         backgroundColor: "#2196F3",
+                        boxShadow: "none", // 불필요한 그림자 제거
                         "&:hover": {
                             backgroundColor: "#1976D2",
                         },
