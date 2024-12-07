@@ -173,41 +173,51 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
         {/*    내 글일 경우 수정 버튼*/}
             {atomUserId == userId && (
                 <>
-                    <Button
-                        variant="contained"
-                        color="primary"
+                    <Box
                         sx={{
-                            borderRadius: '10px',
-                            paddingX: 4,
-                            paddingY: 1,
-                            color: '#FFFFFF',
-                            backgroundColor: blue[200],
-                            '&:hover': {
-                                backgroundColor: '#1976D2',
-                            },
-                            marginRight: 1,
+                            display: 'flex',
+                            justifyContent: 'space-between', // 버튼 간 간격 균등 분배
+                            gap: 2, // 버튼 사이의 간격
+                            marginTop: 2, // 상단 여백
+                            width: '100%', // 부모 박스 크기에 맞춤
                         }}
-                        onClick={handleEditClick}
                     >
-                        수정
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        sx={{
-                            borderRadius: '10px',
-                            paddingX: 4,
-                            paddingY: 1,
-                            color: '#FFFFFF',
-                            backgroundColor: blue[300],
-                            '&:hover': {
-                                backgroundColor: '#D32F2F',
-                            },
-                        }}
-                        onClick={handleDelete} // 삭제 이벤트 핸들러
-                    >
-                        삭제
-                    </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            sx={{
+                                flex: 1, // 버튼 크기 균등
+                                borderRadius: '8px',
+                                paddingY: 1.5,
+                                color: '#FFFFFF',
+                                backgroundColor: blue[200],
+                                '&:hover': {
+                                    backgroundColor: blue[300],
+                                },
+                            }}
+                            onClick={handleEditClick}
+                        >
+                            수정
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            sx={{
+                                flex: 1, // 버튼 크기 균등
+                                borderRadius: '8px',
+                                paddingY: 1.5,
+                                color: blue[200], // 텍스트 색상
+                                backgroundColor: '#FFFFFF', // 흰색 배경
+                                border: `2px solid ${blue[200]}`, // 테두리 추가
+                                '&:hover': {
+                                    backgroundColor: blue[50], // 살짝 옅은 배경색
+                                },
+                            }}
+                            onClick={handleDelete}
+                        >
+                            삭제
+                        </Button>
+                    </Box>
                 </>
             )}
         </Card>
