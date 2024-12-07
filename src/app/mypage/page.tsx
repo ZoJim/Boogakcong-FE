@@ -28,7 +28,8 @@ const Page = () => {
         { id: number; cafeName: string; content: string; createdAt: string }[]
     >([]);
     const [posts, setPosts] = useState<
-        { id: number; title: string; content: string; createdAt: string; imageUrl: string; userId: number}[]
+        {
+            postType: PostType; id: number; title: string; content: string; createdAt: string; imageUrl: string; userId: number}[]
     >([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -326,8 +327,6 @@ const Page = () => {
                     )}
                 </Box>
             </Box>
-
-
             <Navigation/>
 
             <Backdrop open={isReviewModalOpen} onClick={closeReviewModal}>

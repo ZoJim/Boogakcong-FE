@@ -7,7 +7,8 @@ import NavigationBar from "@/components/Navigation";
 import { blue } from "@mui/material/colors";
 import { Posting, PostType } from "@/types";
 import PostingViewer from "@/components/PostViewer";
-import {getPostAll, getTopPost} from "@/app/api/post";
+import {getPostAll, getTopPost, patchPost} from "@/app/api/post";
+import {toast} from "react-toastify";
 
 const Page = () => {
     const [selectedPosting, setSelectedPosting] = useState<Posting | null>(null); // 선택된 게시글 상태
@@ -16,6 +17,7 @@ const Page = () => {
     const [postings, setPostings] = useState<Posting[]>([]); // 전체 게시글 상태
     const [filteredPostings, setFilteredPostings] = useState<Posting[]>([]); // 필터링된 게시글 상태
     const [topPosting, setTopPosting] = useState<Posting | null>(null); // 인기 글 상태
+    const token = localStorage.getItem("accessToken") || null;
 
     // 서버에서 게시글 목록을 가져오는 함수
     useEffect(() => {
@@ -57,9 +59,47 @@ const Page = () => {
 
     const handlePostingClick = (postId: number) => {
         const selected = postings.find(posting => posting.id === postId);
+        console.log("selected:", selected);
         if (selected) {
             setSelectedPosting(selected);
             setIsModalOpen(true); // 모달 열기
+        }
+    };
+
+
+
+    const handlePostUpdate = async (
+        id: number,
+        updatedTitle: string,
+        updatedContent: string,
+        updatedImage: File | string | null,
+        postType: PostType
+    ) => {
+        try {
+            if (!token) {
+                toast.error("로그인이 필요합니다.");
+                return;
+            }
+
+            // 서버에 수정된 데이터 저장
+            await patchPost(id, updatedTitle, updatedContent, updatedImage, postType, token);
+
+            // 클라이언트 상태 업데이트
+            setPostings((prevPostings) =>
+                prevPostings.map((post) =>
+                    post.id === id
+                        ? { ...post, title: updatedTitle, content: updatedContent, imageUrl: updatedImage as string }
+                        : post
+                )
+            );
+
+            toast.success("게시글이 성공적으로 수정되었습니다.");
+
+            // 모달 닫기
+            closeModal();
+        } catch (error) {
+            console.error("게시글 수정 중 오류 발생:", error);
+            toast.error("게시글 수정 중 문제가 발생했습니다.");
         }
     };
 
@@ -175,6 +215,7 @@ const Page = () => {
                                     createdAt={posting.createdAt}
                                     userId={posting.userId}
                                     imageUrl={posting.imageUrl}
+                                    onClick={() => handlePostingClick(posting.id)}
                                 />
                             </Box>
                         ))}
@@ -209,7 +250,16 @@ const Page = () => {
                             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
                         }}
                     >
-                        <PostingViewer {...selectedPosting} />
+                        <PostingViewer
+                            id={selectedPosting.id}
+                            title={selectedPosting.title}
+                            content={selectedPosting.content}
+                            imageUrl={selectedPosting.imageUrl}
+                            postType={selectedPosting.postType}
+                            userId={selectedPosting.userId}
+                            createdAt={selectedPosting.createdAt}
+                            onUpdate={handlePostUpdate}
+                        />
                     </Box>
                 )}
             </Backdrop>

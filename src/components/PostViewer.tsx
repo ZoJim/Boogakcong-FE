@@ -18,9 +18,12 @@ interface PostingViewerProps {
 }
 
 const PostingViewer = ({ id, title, content, userId, postType, imageUrl, createdAt, onUpdate}: PostingViewerProps) => {
-    const atomUserId = useAtomValue(userIdAtom);
+    const atomUserId = localStorage.getItem("userId") || null;
+    const token = localStorage.getItem("accessToken") || null;
     const [isEditing, setIsEditing] = useState(false); // 에디터 모드 상태
 
+    console.log("userId: ", userId);
+    console.log("atomUserId: ", atomUserId);
     const handleEditClick = () => {
         setIsEditing(true);
     };
@@ -152,7 +155,7 @@ const PostingViewer = ({ id, title, content, userId, postType, imageUrl, created
             </Box>
 
         {/*    내 글일 경우 수정 버튼*/}
-            {atomUserId === userId && (
+            {atomUserId == userId && (
                 <Button
                     variant="contained"
                     color="primary"
