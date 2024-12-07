@@ -8,8 +8,15 @@ import { blue, grey } from '@mui/material/colors';
 import UserInfo from '@/components/UserInfo';
 import ShortReview from '@/components/ShortReview';
 import PostingList from '@/components/PostingList';
+import DeleteInfo from '@/components/DeleteInfo'; // DeleteInfo 컴포넌트 import 추가
+import CafeRegister from '@/components/CafeRegister';
 
 const Page = () => {
+  const handleApprove = (requestId: string) => {
+    console.log(`${requestId} has been approved.`);
+    alert(`${requestId} 등록 요청이 승인되었습니다.`);
+      };
+
   return (
     <Box
       sx={{
@@ -35,7 +42,7 @@ const Page = () => {
 
       {/* 컨텐츠 섹션 */}
       <Box>
-        <Typography variant="h3" sx={{ fontSize: 24, mb: 1, color: 'white' }}>
+        <Typography variant="h3" sx={{ fontSize: 24, fontWeight:"bold", mb: 1, color: 'white' }}>
           회원 관리
         </Typography>
         <Box
@@ -126,9 +133,9 @@ const Page = () => {
           </Box>
         </Box>
 
+        {/* 간단 후기 모니터링 */}
         <Box>
-          {/* 간단 후기 모니터링 */}
-          <Typography variant="h3" sx={{ fontSize: 24, mb: 1, color: 'white' }}>
+          <Typography variant="h3" sx={{ fontSize: 24, fontWeight:"bold", mb: 1, color: 'white' }}>
             간단 후기 모니터링
           </Typography>
 
@@ -142,15 +149,15 @@ const Page = () => {
                 }}
             >
                 <ShortReview
-                cafeId="1"
-                cafeName="유일무이 카페"
-                content="커피가 산미있어서 호불호가 갈릴 듯 해요"
-                createdAt="2024-12-06T00:19:53.602633"
-                onClick={undefined}
+                  cafeId="1"
+                  cafeName="유일무이 카페"
+                  content="커피가 산미있어서 호불호가 갈릴 듯 해요"
+                  createdAt="2024-12-06T00:19:53.602633"
+                  onClick={undefined}
                 />
 
             </Box>
-            ))}
+          ))}
         </Box>
 
         {/* 게시글 모니터링 */}
@@ -161,7 +168,7 @@ const Page = () => {
                 p: 0,
             }}
         >
-          <Typography variant="h3" sx={{ fontSize: 24, mt: 3, mb: 1, color: 'white' }}>
+          <Typography variant="h3" sx={{ fontSize: 24, fontWeight:"bold", mt: 3, mb: 1, color: 'white' }}>
             게시글 모니터링
           </Typography>
 
@@ -185,6 +192,63 @@ const Page = () => {
             </Box>
           ))}
         </Box>
+
+        {/* 카페 삭제 & 등록 요청 */}
+        <Box
+            sx={{
+                flex: 1,
+                borderRadius: 2,
+                p: 0,
+            }}
+        >
+          <Typography variant="h3" sx={{ fontSize: 24, fontWeight:"bold", mt: 3, mb: 1, color: 'white' }}>
+            카페 요청
+          </Typography>
+
+          {/* 카페 삭제 요청*/}
+          <Typography variant="h4" sx={{ fontSize: 20, fontWeight:"bold", mb: 1, color: 'white' }}>
+            삭제 요청
+          </Typography>
+
+          {[1, 2].map((id) => (
+            <Box
+              key={id}
+              sx={{
+                mb: 1,
+                p: 0,
+                borderRadius: 2
+              }}
+            >
+              {/* DeleteInfo 컴포넌트 사용 */}
+              <DeleteInfo cafeID={id} cafeName="에이바우트" reason="더이상 운영하지 않아요." />
+            </Box>
+          ))}
+
+          {/* 카페 등록 승인 */}
+          <Typography variant="h4" sx={{ fontSize: 20, fontWeight:"bold", mt: 2, mb: 1, color: 'white' }}>
+            등록 요청
+          </Typography>
+          {[1].map((id) => (
+            <Box
+              key={id}
+              sx={{
+                mb: 1,
+                p: 0,
+                borderRadius: 2
+              }}
+            >
+            {[{ id: '유저1 & 카페1' }, { id: '유저2 & 카페2' }].map((request) => (
+                <CafeRegister
+                key={request.id}
+                requestId={request.id}
+                onApprove={() => handleApprove(request.id)}
+                />
+            ))}
+            </Box>
+          ))}
+
+        </Box>
+
       </Box>
     </Box>
   );
