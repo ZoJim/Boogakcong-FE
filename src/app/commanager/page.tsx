@@ -22,7 +22,7 @@ import ShortReview from "@/components/ShortReview";
 import PostingList from "@/components/PostingList";
 import {getReviewList} from "@/app/api/review"; // Import getReviewList API
 import {getPostAll} from "@/app/api/post";
-import {getCafeDeleteRequest} from "@/app/api/cafe"; // Import getPostAll API
+import {approveCafeDeleteRequest, deleteCafe, getCafeDeleteRequest} from "@/app/api/cafe"; // Import getPostAll API
 
 const Page = () => {
     const token = localStorage.getItem('accessToken') || null;
@@ -38,6 +38,9 @@ const Page = () => {
     const [searchQuery, setSearchQuery] = useState(''); // State to store search query
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State to handle delete dialog visibility
     const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null); // Store user id to delete
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // State to handle confirmation dialog visibility
+    const [cafeIdToDelete, setCafeIdToDelete] = useState<number | null>(null); // Store cafe id to delete
+
 
     // Fetch user list
     const fetchUserList = async () => {
@@ -86,21 +89,20 @@ const Page = () => {
         }
     };
 
-// Fetch delete request list
+    // Fetch delete request list
     const fetchDeleteRequestList = async () => {
         if (!token) return;
         setDeleteRequestLoading(true);
         try {
-            const deleteRequests = await getCafeDeleteRequest(token); // Get delete requests from the API
-            console.log(deleteRequests); // Check the data you're getting from the API
-            setDeleteRequest(deleteRequests); // Set the actual delete request data
+            const deleteRequests = await getCafeDeleteRequest(token);
+            setDeleteRequest(deleteRequests);
         } catch (error) {
-            console.error('카페 삭제 요청 목록을 불러오는 데 실패했습니다:', error);
             toast.error('카페 삭제 요청 목록을 불러오는 데 실패했습니다.');
         } finally {
-            setDeleteRequestLoading(false); // Reset the loading state after the request is complete
+            setDeleteRequestLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchUserList();
@@ -124,6 +126,42 @@ const Page = () => {
         );
         setFilteredUserList(filtered); // Update the filtered list only
     };
+    const handleCloseConfirmDialog = () => {
+        setOpenConfirmDialog(false); // Close the dialog
+        setUserIdToDelete(null);
+    };
+
+
+    const handleDeleteCafe = async () => {
+        if (!token || cafeIdToDelete === null) return;
+
+        try {
+            await approveCafeDeleteRequest(token, cafeIdToDelete); // Call API to delete the cafe
+            toast.success('카페 삭제가 완료되었습니다.');
+
+            // Remove deleted cafe from the delete request list
+            setDeleteRequest(deleteRequest.filter(request => request.cafeId !== cafeIdToDelete));
+            handleCloseConfirmDialog(); // Close the dialog after successful deletion
+        } catch (error) {
+            toast.error('카페 삭제에 실패했습니다.');
+        }
+    };
+
+    const handleDeleteUser = async () => {
+        if (!token || userIdToDelete === null) return;
+
+        try {
+            await deleteUser(token, userIdToDelete); // Call API to delete the user
+            toast.success('사용자 삭제가 완료되었습니다.');
+
+            // Remove deleted user from the user list
+            setUserList(userList.filter(user => user.id !== userIdToDelete));
+            handleCloseDeleteDialog(); // Close the dialog after successful deletion
+        } catch (error) {
+            toast.error('사용자 삭제에 실패했습니다.');
+        }
+    }
+
 
     const handleOpenDeleteDialog = (userId: number) => {
         setUserIdToDelete(userId);
@@ -135,21 +173,9 @@ const Page = () => {
         setUserIdToDelete(null);
     };
 
-    const handleDelete = async () => {
-        if (!token || userIdToDelete === null) return;
-
-        try {
-            await deleteUser(userIdToDelete, token); // Call API to delete the user
-            toast.success('사용자가 삭제되었습니다.');
-
-            // Remove deleted user from both lists
-            setUserList(userList.filter(user => user.id !== userIdToDelete));
-            setFilteredUserList(filteredUserList.filter(user => user.id !== userIdToDelete));
-            handleCloseDeleteDialog(); // Close the dialog after successful deletion
-        } catch (error) {
-            console.error('사용자 삭제에 실패했습니다:', error);
-            toast.error('사용자 삭제에 실패했습니다.');
-        }
+    const handleOpenConfirmDialog = (cafeID: number) => {
+        setCafeIdToDelete(cafeID);
+        setOpenConfirmDialog(true); // Open the confirmation dialog
     };
 
     return (
@@ -337,36 +363,42 @@ const Page = () => {
             </Box>
 
             {/* 카페 삭제 & 등록 요청 */}
-            <Box sx={{ flex: 1, borderRadius: 2, p: 0 }}>
-                <Typography variant="h3" sx={{ fontSize: 24, fontWeight: 'bold', mt: 3, mb: 1, color: 'white' }}>
+            <Box sx={{flex: 1, borderRadius: 2, p: 0}}>
+                <Typography variant="h3" sx={{fontSize: 24, fontWeight: 'bold', mt: 3, mb: 1, color: 'white'}}>
                     카페 요청
                 </Typography>
 
                 {/* 카페 삭제 요청 */}
-                <Typography variant="h4" sx={{ fontSize: 20, fontWeight: 'bold', mb: 1, color: 'white' }}>
+                <Typography variant="h4" sx={{fontSize: 20, fontWeight: 'bold', mb: 1, color: 'white'}}>
                     삭제 요청
                 </Typography>
                 {deleteRequestLoading ? (
-                    <Typography variant="h6" sx={{ color: 'white' }}>삭제 요청을 불러오는 중...</Typography>
+                    <Typography variant="h6" sx={{color: 'white'}}>삭제 요청을 불러오는 중...</Typography>
                 ) : (
                     deleteRequest.length > 0 ? (
                         deleteRequest.map((request) => (
-                            <Box key={request.cafeId} sx={{ mb: 1, p: 0, borderRadius: 2 }}>
-                                <DeleteInfo cafeID={request.cafeId} cafeName={request.cafeName} deleteReason={request.deleteReason} />
+                            <Box key={request.cafeId} sx={{mb: 1, p: 0, borderRadius: 2}}>
+                                <DeleteInfo
+                                    cafeID={request.cafeId}
+                                    cafeName={request.cafeName}
+                                    deleteReason={request.deleteReason}
+                                    requestStatus={request.requestStatus}
+                                    onApprove={handleOpenConfirmDialog} // Pass onApprove callback
+                                />
                             </Box>
                         ))
                     ) : (
-                        <Typography variant="h6" sx={{ color: 'white' }}>삭제 요청이 없습니다.</Typography>
+                        <Typography variant="h6" sx={{color: 'white'}}>삭제 요청이 없습니다.</Typography>
                     )
                 )}
 
                 {/* 카페 등록 승인 */}
-                <Typography variant="h4" sx={{ fontSize: 20, fontWeight: 'bold', mt: 2, mb: 1, color: 'white' }}>
+                <Typography variant="h4" sx={{fontSize: 20, fontWeight: 'bold', mt: 2, mb: 1, color: 'white'}}>
                     등록 요청
                 </Typography>
                 {[1].map((id) => (
-                    <Box key={id} sx={{ mb: 1, p: 0, borderRadius: 2 }}>
-                        {[{ id: '유저1 & 카페1' }, { id: '유저2 & 카페2' }].map((request) => (
+                    <Box key={id} sx={{mb: 1, p: 0, borderRadius: 2}}>
+                        {[{id: '유저1 & 카페1'}, {id: '유저2 & 카페2'}].map((request) => (
                             <CafeRegister
                                 key={request.id}
                                 requestId={request.id}
@@ -392,9 +424,23 @@ const Page = () => {
                     <Button onClick={handleCloseDeleteDialog} color="primary">
                         취소
                     </Button>
-                    <Button onClick={handleDelete} color="error">
+                    {/*FIXME: 고치기 */}
+                    <Button onClick={handleDeleteUser} color="error">
                         삭제
                     </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* 삭제 확인 다이얼로그 */}
+            <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog}>
+                <DialogTitle>삭제 확인</DialogTitle>
+                <DialogContent>
+                    <Typography>정말로 이 카페를 삭제하시겠습니까?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    {/*FIXME: 고치기 */}
+                    <Button onClick={handleCloseConfirmDialog} color="primary">취소</Button>
+                    <Button onClick={handleDeleteCafe(1)} color="error">삭제</Button>
                 </DialogActions>
             </Dialog>
         </Box>

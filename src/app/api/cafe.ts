@@ -28,10 +28,19 @@ export const updateCafeDetail = (token: string,
     );
 }
 
-export const deleteCafe = (reason: number, token: string) => {
+export const deleteCafe = (token: string, reason: number) => {
     const queryString = `?reasonId=${encodeURIComponent(reason)}`;
 
-    return springApiRequest('DELETE', `/api/cafes/owners/request${queryString}`, token, );
+    return springApiRequest('DELETE', `/api/cafes/owners/request${queryString}`, token,);
 }
 
 export const getCafeDeleteRequest = (token: string) => springApiRequest('GET', '/api/cafes/owners/delete', token);
+export const approveCafeDeleteRequest = (token: string, requestId: number) => {
+    const queryString = `?requestId=${encodeURIComponent(requestId)}&accept=true`;
+    return springApiRequest('POST', `/api/cafes/owners/delete${queryString}`, token);
+}
+
+export const rejectCafeDeleteRequest = (token: string, requestId: number) => {
+    const queryString = `?requestId=${encodeURIComponent(requestId)}&accept=false`;
+    return springApiRequest('POST', `/api/cafes/owners/delete${queryString}`, token);
+}

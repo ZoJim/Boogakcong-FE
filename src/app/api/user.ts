@@ -6,4 +6,4 @@ export const getCafeStatus = (token: string) => springApiRequest('GET', '/api/ca
 
 export const getUserList = (token: string) => springApiRequest('GET', '/api/member/list', token);
 
-export const deleteUser = (userId: number, token: string) => springApiRequest('DELETE', `/api/member/${userId}`, token);
+export const deleteUser = (token: string, userId: number) => springApiRequest('DELETE', `/api/member/${userId}`, token);
