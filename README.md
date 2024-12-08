@@ -1,4 +1,4 @@
-## 🛠️ 기술 스택
+# Boogakcong-FE
 
 ### Frontend
 - **Next.js v15.0.4** 
@@ -6,8 +6,8 @@
 - **MUI (Material UI)**
 - **Jotai**
 
-## 🚀 프로젝트 실행 방법
-### FrontEnd
+
+### How to Run
 ```
 git clone https://github.com/ZoJim/Boogakcong-FE.git
 ```
