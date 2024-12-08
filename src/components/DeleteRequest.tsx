@@ -25,7 +25,7 @@ const DeleteRequest = () => {
     const handleSubmit = async () => {
         try {
             // 선택된 이유와 토큰을 deleteCafe 함수에 전달
-            await deleteCafe(selectedReason, token);
+            await deleteCafe(token, selectedReason);
 
             console.log('카페 삭제 요청이 제출되었습니다.');
             toast.success('카페 삭제 요청이 제출되었습니다. (처리까지 약 2일)');

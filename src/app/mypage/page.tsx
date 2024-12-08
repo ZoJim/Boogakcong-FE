@@ -18,6 +18,8 @@ import {useRouter} from 'next/navigation';
 
 const Page = () => {
     const token = localStorage.getItem("accessToken") || null;
+
+
     const router = useRouter();
     const [userInfo, setUserInfo] = useState<{
         name: string;
@@ -243,7 +245,8 @@ const Page = () => {
             fetchMyPosts();
         }
     }, [token]);
-
+    console.log("token:", token);
+    console.log("userInfo:", userInfo);
     return (
         <Box
             sx={{
